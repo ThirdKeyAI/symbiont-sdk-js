@@ -13,8 +13,16 @@ Everything you need to know to start using the Symbiont SDK, including installat
 - **[Policy Creation](./guides/policy-creation.md)** - Building complex policies using the PolicyBuilder
 - **[Secrets Management](./guides/secrets-management.md)** - Securely handling credentials and sensitive data
 
-### 🔍 [API Reference](./api/index.html)
+### 🔍 API Reference
 Complete API documentation generated from source code with detailed information about all classes, methods, and interfaces.
+
+**Note**: The API documentation is automatically generated from JSDoc comments in the source code. To generate the latest API docs:
+
+```bash
+npm run docs:api
+```
+
+The generated API documentation will be available at `./api/index.html` after running the above command.
 
 ## 🏗️ Architecture
 

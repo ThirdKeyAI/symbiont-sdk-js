@@ -17,6 +17,8 @@
     "type-check": "tsc --build",
     "clean": "npm run clean --workspaces",
     "dev": "npm run dev --workspaces",
+    "docs:api": "typedoc",
+    "docs:build": "npm run docs:api",
     "release": "lerna publish"
   },
   "devDependencies": {

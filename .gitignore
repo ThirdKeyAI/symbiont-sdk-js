@@ -137,3 +137,10 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Generated documentation
+apps/docs/api/
+*.tgz
+
+# TypeDoc output
+docs/
