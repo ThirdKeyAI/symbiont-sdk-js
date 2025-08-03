@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@symbiont/*": ["packages/*/src"]
+    },
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "references": [
+    { "path": "./packages/types" },
+    { "path": "./packages/core" },
+    { "path": "./packages/agent" },
+    { "path": "./packages/policy" },
+    { "path": "./packages/secrets" },
+    { "path": "./packages/tool-review" },
+    { "path": "./packages/mcp" },
+    { "path": "./packages/cli" },
+    { "path": "./packages/testing" }
+  ],
+  "files": [],
+  "include": []
+}

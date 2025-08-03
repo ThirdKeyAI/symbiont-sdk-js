@@ -1,0 +1,53 @@
+{
+  "name": "symbiont-sdk-js",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Symbiont JavaScript SDK - Monorepo",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "lint": "npm run lint --workspaces",
+    "type-check": "tsc --build",
+    "clean": "npm run clean --workspaces",
+    "dev": "npm run dev --workspaces",
+    "release": "lerna publish"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "eslint": "^9.0.0",
+    "globals": "^16.3.0",
+    "lerna": "^8.0.0",
+    "rollup": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4"
+  },
+  "overrides": {
+    "glob": "^10.4.5",
+    "inflight": "^1.0.6"
+  },
+  "dependencies": {
+    "axios": "^1.5.0",
+    "ws": "^8.14.0",
+    "zod": "^3.22.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/symbiont/symbiont-sdk-js.git"
+  },
+  "license": "MIT"
+}
