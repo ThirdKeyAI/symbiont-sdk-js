@@ -4,279 +4,167 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive, type-safe JavaScript/TypeScript SDK for interacting with the Symbiont platform. Build, deploy, and manage AI agents with full type safety and modern development practices.
+A comprehensive, type-safe JavaScript/TypeScript SDK for building and managing AI agents on the Symbiont platform. Get started quickly with full TypeScript support, intelligent caching, and enterprise-grade security.
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Installation
 
 ```bash
 npm install @symbiont/core
-# or
-yarn add @symbiont/core
-# or
-pnpm add @symbiont/core
 ```
 
-### Basic Usage
+### Hello World
 
 ```typescript
 import { SymbiontClient } from '@symbiont/core';
 
 const client = new SymbiontClient({
-  apiUrl: 'https://api.symbiont.dev',
   apiKey: process.env.SYMBIONT_API_KEY,
   environment: 'production'
 });
 
-// Connect to Symbiont
 await client.connect();
 
-// Check system health
-const health = await client.health();
-console.log('Status:', health.status);
-
-// Create and execute an agent
-const agent = await client.agents.create({
-  name: 'dataProcessor',
-  // ... agent definition
+// Create and execute your first agent
+const agent = await client.agents.createAgent({
+  name: 'textProcessor',
+  description: 'Processes and analyzes text input',
+  parameters: [{ name: 'text', type: { name: 'string' }, required: true }],
+  returnType: { name: 'string' },
+  capabilities: ['text_processing']
 });
 
-const result = await agent.execute({ input: 'sample data' });
+const result = await client.agents.executeAgent(
+  agent.id,
+  { text: 'Hello, Symbiont!' }
+);
+
 console.log('Result:', result.result);
 ```
 
-## Core Features
+## ✨ Core Features
 
-- **🔐 Dual API Support**: Seamlessly work with both Runtime HTTP API and Tool Review API
-- **🛡️ Type Safety**: Full TypeScript support with runtime validation options
-- **⚡ Performance**: Configurable validation modes and intelligent caching
-- **🔄 Auto-Authentication**: Automatic token management and refresh
-- **📦 Modular Design**: Import only what you need
-- **🌍 Cross-Platform**: Works in Node.js, browsers, and edge environments
+- **🤖 AI Agent Management** - Create, deploy, and execute intelligent agents
+- **🔐 Security-First** - Built-in policy management and secrets handling
+- **🛡️ Type Safety** - Full TypeScript support with runtime validation
+- **⚡ High Performance** - Intelligent caching and optimized networking
+- **🔄 Auto-Authentication** - Seamless token management and refresh
+- **📦 Modular Design** - Use only what you need
+- **🌍 Cross-Platform** - Node.js, browser, and edge runtime support
 
-## Package Structure
+## 📚 Documentation
 
-The SDK is organized as a monorepo with specialized packages:
+### 🎯 **[Getting Started](./apps/docs/guides/getting-started.md)**
+Complete installation guide, configuration options, and your first agent
 
-| Package | Description | Installation |
-|---------|-------------|--------------|
-| **[@symbiont/core](./packages/core)** | Core client and base functionality | `npm install @symbiont/core` |
-| **[@symbiont/agent](./packages/agent)** | Agent management and execution | `npm install @symbiont/agent` |
-| **[@symbiont/policy](./packages/policy)** | Policy management and validation | `npm install @symbiont/policy` |
-| **[@symbiont/secrets](./packages/secrets)** | Secrets management and encryption | `npm install @symbiont/secrets` |
-| **[@symbiont/tool-review](./packages/tool-review)** | Tool Review API client | `npm install @symbiont/tool-review` |
-| **[@symbiont/mcp](./packages/mcp)** | MCP client integration | `npm install @symbiont/mcp` |
-| **[@symbiont/cli](./packages/cli)** | Command-line interface | `npm install -g @symbiont/cli` |
+### 📖 **User Guides**
+- **[Agent Management](./apps/docs/guides/agent-management.md)** - Creating, managing, and executing agents
+- **[Tool Review Workflow](./apps/docs/guides/tool-review-workflow.md)** - Security review process for tools and agents
+- **[Policy Creation](./apps/docs/guides/policy-creation.md)** - Building access control and governance policies
+- **[Secrets Management](./apps/docs/guides/secrets-management.md)** - Secure credential and configuration management
 
-## Key Examples
+### 🔍 **[API Reference](./apps/docs/api/index.html)**
+Complete API documentation with examples and type definitions
 
-### Agent Management
+### 🏗️ **Architecture**
+- **[Architecture Overview](./ARCHITECTURE.md)** - Technical design and system architecture
+- **[Implementation Guide](./IMPLEMENTATION_GUIDE.md)** - Development roadmap and implementation details
 
-```typescript
-import { SymbiontClient, DSLBuilder } from '@symbiont/core';
+## 📦 SDK Packages
 
-const client = new SymbiontClient({ /* config */ });
+| Package | Purpose | Installation |
+|---------|---------|--------------|
+| **[@symbiont/core](./packages/core)** | Main client and authentication | `npm install @symbiont/core` |
+| **[@symbiont/agent](./packages/agent)** | Agent lifecycle management | `npm install @symbiont/agent` |
+| **[@symbiont/policy](./packages/policy)** | Policy creation and validation | `npm install @symbiont/policy` |
+| **[@symbiont/secrets](./packages/secrets)** | Secure secrets management | `npm install @symbiont/secrets` |
+| **[@symbiont/tool-review](./packages/tool-review)** | Security review workflow | `npm install @symbiont/tool-review` |
+| **[@symbiont/mcp](./packages/mcp)** | MCP protocol integration | `npm install @symbiont/mcp` |
 
-// Create agent using DSL builder
-const agent = await new DSLBuilder()
-  .metadata({
-    version: '1.0.0',
-    author: 'developer',
-    description: 'Data processing agent'
-  })
-  .agent('processData', [
-    { name: 'input', type: { name: 'DataSet' }, required: true }
-  ], { name: 'Result' })
-  .capabilities('data_processing', 'file_access')
-  .execution({ memory: 'ephemeral', privacy: 'high' })
-  .create(client.agents);
-
-// Execute agent
-const result = await agent.execute({ input: dataset });
-```
-
-### Policy Management
-
-```typescript
-import { PolicyBuilder } from '@symbiont/policy';
-
-const policy = await new PolicyBuilder()
-  .name('dataProcessingPolicy')
-  .allow(['read', 'process'], ['data/*'])
-    .when('user.role', 'equals', 'analyst')
-    .audit('detailed')
-    .end()
-  .deny(['export'], ['sensitive/*'])
-    .end()
-  .create(client.policies);
-```
-
-### Tool Review Integration
-
-```typescript
-// Submit tools for review
-const session = await client.toolReview.createSession({
-  tools: [myTool],
-  reviewLevel: 'standard'
-});
-
-const submission = await client.toolReview.submitTool(session.id, {
-  toolId: 'my-tool',
-  metadata: { version: '1.0.0' }
-});
-```
-
-## Configuration
+## 🛠️ Configuration
 
 ### Environment Variables
-
 ```bash
 # Required
 SYMBIONT_API_KEY=your_api_key_here
 
 # Optional
 SYMBIONT_API_URL=https://api.symbiont.dev
-SYMBIONT_TOOL_REVIEW_URL=https://tool-review.symbiont.dev
 SYMBIONT_ENVIRONMENT=production
 ```
 
-### Advanced Configuration
-
+### Client Configuration
 ```typescript
 const client = new SymbiontClient({
-  // API Configuration
-  runtimeApiUrl: 'https://api.symbiont.dev',
-  toolReviewApiUrl: 'https://tool-review.symbiont.dev',
-  
-  // Authentication
   apiKey: process.env.SYMBIONT_API_KEY,
-  jwt: process.env.SYMBIONT_JWT,
-  
-  // Validation Mode
-  validationMode: 'development', // 'strict' | 'performance' | 'development'
-  
-  // Performance
+  environment: 'production',
+  validationMode: 'strict',
   timeout: 30000,
-  cacheConfig: {
-    ttl: 300000, // 5 minutes
-    maxSize: 100
-  },
-  
-  // Retry Strategy
-  retryConfig: {
-    attempts: 3,
-    backoff: 'exponential',
-    maxDelay: 10000
-  }
+  debug: false
 });
 ```
 
-## CLI Usage
+## 🎯 Common Use Cases
 
-```bash
-# Install CLI globally
-npm install -g @symbiont/cli
-
-# Authenticate
-symbiont auth login
-
-# Agent management
-symbiont agent create ./my-agent.dsl
-symbiont agent list
-symbiont agent execute <agent-id> --params '{"input": "data"}'
-
-# Policy management
-symbiont policy create ./policy.yaml
-symbiont policy test <policy-id> --context '{"user": "admin"}'
-
-# Secrets management
-symbiont secrets set myapp/db/password "secret123"
-symbiont secrets get myapp/db/password
-```
-
-## Browser Support
-
-### CDN Usage
-
-```html
-<script type="module">
-  import { SymbiontClient } from 'https://cdn.jsdelivr.net/npm/@symbiont/core/dist/browser.esm.js';
-  
-  const client = new SymbiontClient({
-    apiUrl: 'https://api.symbiont.dev',
-    apiKey: 'your-api-key'
-  });
-  
-  await client.connect();
-</script>
-```
-
-### React Integration
-
+### Agent Creation and Execution
 ```typescript
-import { useSymbiont, useAgent } from '@symbiont/react';
+// Create a data analysis agent
+const agent = await client.agents.createAgent({
+  name: 'dataAnalyzer',
+  description: 'Analyzes datasets and generates insights',
+  parameters: [
+    { name: 'dataset', type: { name: 'object' }, required: true },
+    { name: 'analysisType', type: { name: 'string' }, required: false }
+  ],
+  capabilities: ['data_processing', 'visualization'],
+  policies: [dataAccessPolicy]
+});
 
-function AgentDashboard() {
-  const { client, connected } = useSymbiont({
-    apiKey: process.env.REACT_APP_SYMBIONT_API_KEY
-  });
-  
-  const { agent, execute, loading } = useAgent('data-processor');
-  
-  if (!connected) return <div>Connecting...</div>;
-  
-  return (
-    <div>
-      <h1>Agent: {agent?.definition.name}</h1>
-      <button onClick={() => execute({ input: 'new data' })}>
-        Execute Agent
-      </button>
-      {loading && <div>Processing...</div>}
-    </div>
-  );
-}
+const insights = await client.agents.executeAgent(agent.id, {
+  dataset: myData,
+  analysisType: 'trend_analysis'
+});
 ```
 
-## Error Handling
-
-The SDK provides comprehensive error handling with specific error types:
-
+### Policy Management
 ```typescript
-import { 
-  AuthenticationError, 
-  ValidationError, 
-  AgentNotFoundError 
-} from '@symbiont/core';
+import { PolicyBuilder } from '@symbiont/policy';
 
-try {
-  const result = await client.agents.execute('agent-id', params);
-} catch (error) {
-  if (error instanceof AuthenticationError) {
-    // Handle auth issues
-    console.error('Authentication failed:', error.message);
-  } else if (error instanceof ValidationError) {
-    // Handle validation issues
-    console.error('Validation error:', error.field, error.message);
-  } else if (error instanceof AgentNotFoundError) {
-    // Handle missing agent
-    console.error('Agent not found:', error.agentId);
-  }
-}
+// Create access control policy
+const policy = new PolicyBuilder('dataAccessPolicy')
+  .allow('read', 'analyze')
+    .where('user.department', 'equals', 'analytics')
+    .where('data.classification', 'not-equals', 'restricted')
+  .require('approval')
+    .where('action', 'equals', 'export')
+  .build();
 ```
 
-## Documentation
+### Secrets Management
+```typescript
+import { SecretManager } from '@symbiont/secrets';
 
-- **[Architecture Guide](./ARCHITECTURE.md)** - Technical architecture and design decisions
-- **[API Reference](https://docs.symbiont.dev/sdk/js/api)** - Complete API documentation
-- **[Examples](./examples)** - Working code examples
-- **[Migration Guide](https://docs.symbiont.dev/sdk/js/migration)** - Upgrading between versions
+const secrets = new SecretManager({
+  providers: [
+    { name: 'environment', priority: 100 },
+    { name: 'vault', priority: 200, endpoint: 'https://vault.company.com' }
+  ]
+});
 
-## Contributing
+const apiKey = await secrets.getSecret('EXTERNAL_API_KEY');
+```
 
-We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
+## 🆘 Getting Help
 
-### Development Setup
+- **[Complete Documentation](./apps/docs/README.md)** - Comprehensive guides and examples
+- **[API Reference](./apps/docs/api/index.html)** - Full API documentation
+- **[Examples](./apps/examples/)** - Working code examples
+- **[GitHub Issues](https://github.com/thirdkeyai/symbiont-sdk-js/issues)** - Bug reports and feature requests
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for development setup and guidelines.
 
 ```bash
 git clone https://github.com/thirdkeyai/symbiont-sdk-js
@@ -286,16 +174,10 @@ npm run build
 npm test
 ```
 
-## Support
-
-- **Documentation**: [docs.symbiont.dev/sdk/js](https://docs.symbiont.dev/sdk/js)
-- **GitHub Issues**: [github.com/thirdkeyai/symbiont-sdk-js/issues](https://github.com/thirdkeyai/symbiont-sdk-js/issues)
-- **Community**: [discord.gg/symbiont](https://discord.gg/symbiont)
-
-## License
+## 📄 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Symbiont SDK** - Build the future of AI agents with confidence.
+**Ready to build the future of AI?** [Get started now →](./apps/docs/guides/getting-started.md)

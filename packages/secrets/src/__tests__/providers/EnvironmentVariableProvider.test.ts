@@ -257,7 +257,8 @@ describe('EnvironmentVariableProvider Edge Cases', () => {
     };
     
     const provider = new EnvironmentVariableProvider(config);
-    const complexValue = 'Line 1\nLine 2\tTabbed\r\nWindows newline\0Null char';
+    // Note: Environment variables strip null characters, so we test without them
+    const complexValue = 'Line 1\nLine 2\tTabbed\r\nWindows newline';
     
     process.env.TEST_COMPLEX_VALUE = complexValue;
     

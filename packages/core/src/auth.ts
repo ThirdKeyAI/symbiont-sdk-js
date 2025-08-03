@@ -120,16 +120,19 @@ export class AuthenticationManager {
    * Refresh JWT token
    */
   private async refreshJwtToken(): Promise<void> {
-    // Try to resolve from SecretManager if not directly provided
-    if (!this.jwtToken && this.secretManager) {
+    // Try to resolve from SecretManager if not directly provided or if expired
+    if ((!this.jwtToken || this.isTokenExpired(this.jwtToken)) && this.secretManager) {
       try {
-        this.jwtToken = await this.secretManager.getSecret('JWT_TOKEN', {
+        const freshToken = await this.secretManager.getSecret('JWT_TOKEN', {
           required: false,
           defaultValue: undefined
         });
         
-        if (this.config.debug && this.jwtToken) {
-          console.log('JWT token resolved from SecretManager');
+        if (freshToken) {
+          this.jwtToken = freshToken;
+          if (this.config.debug) {
+            console.log('JWT token resolved from SecretManager');
+          }
         }
       } catch (error) {
         if (this.config.debug) {

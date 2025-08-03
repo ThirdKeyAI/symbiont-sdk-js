@@ -1,6 +1,11 @@
 /**
  * Mock fetch implementation for testing HTTP requests
  */
+
+// Type definitions for fetch API
+type RequestInfo = string | URL | Request;
+type HeadersInit = Headers | string[][] | Record<string, string>;
+
 export class MockFetch {
   private responses = new Map<string, MockResponse>();
   private defaultResponse: MockResponse | null = null;
@@ -101,23 +106,27 @@ export class MockFetch {
     }
 
     // Create mock Response object
-    return new Response(
-      typeof mockResponse.body === 'string' ? mockResponse.body : JSON.stringify(mockResponse.body),
-      {
-        status: mockResponse.status,
-        statusText: mockResponse.statusText,
-        headers: mockResponse.headers
-      }
-    );
+    // Note: 204 No Content responses cannot have a body
+    const responseBody = mockResponse.status === 204 ? null :
+      (typeof mockResponse.body === 'string' ? mockResponse.body : JSON.stringify(mockResponse.body));
+    
+    return new Response(responseBody, {
+      status: mockResponse.status,
+      statusText: mockResponse.statusText,
+      headers: mockResponse.headers
+    });
   }
 
   /**
    * Find a matching mock response for the given URL
    */
   private findMatchingResponse(url: string): MockResponse | null {
-    // Try exact matches first
+    // Extract path from URL (remove query parameters for matching)
+    const urlPath = url.split('?')[0];
+    
+    // Try exact path matches first
     for (const [pattern, response] of this.responses) {
-      if (url.includes(pattern)) {
+      if (urlPath.includes(pattern) || url.includes(pattern)) {
         return response;
       }
     }
@@ -126,7 +135,7 @@ export class MockFetch {
     for (const [pattern, response] of this.responses) {
       try {
         const regex = new RegExp(pattern);
-        if (regex.test(url)) {
+        if (regex.test(url) || regex.test(urlPath)) {
           return response;
         }
       } catch {

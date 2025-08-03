@@ -122,7 +122,9 @@ describe('SecretManager', () => {
     });
 
     it('should handle timeout correctly', async () => {
-      // Mock a slow provider by creating a custom one
+      // Create a manager with a provider that will find the secret but delay long enough to timeout
+      process.env.SLOW_TEST_KEY = 'slow-value';
+      
       const slowConfig = {
         providers: [
           { name: 'environment' as const, priority: 100, prefix: 'SLOW_' }
@@ -132,13 +134,25 @@ describe('SecretManager', () => {
       const manager = new SecretManager(slowConfig);
       await manager.initialize();
       
+      // Mock the provider's getSecret method to simulate a slow response
+      const provider = manager.getProvider('environment');
+      if (provider) {
+        const originalGetSecret = provider.getSecret.bind(provider);
+        provider.getSecret = async (key: string) => {
+          // Simulate a delay longer than the timeout
+          await new Promise(resolve => setTimeout(resolve, 200));
+          return originalGetSecret(key);
+        };
+      }
+      
       await expect(
-        manager.getSecret('NON_EXISTENT_KEY', {
-          timeout: 100, // Very short timeout
+        manager.getSecret('TEST_KEY', {
+          timeout: 100, // Shorter than the simulated delay
           required: true
         })
       ).rejects.toThrow(SecretTimeoutError);
       
+      delete process.env.SLOW_TEST_KEY;
       await manager.cleanup();
     });
 

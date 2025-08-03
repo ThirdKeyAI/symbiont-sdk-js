@@ -1,0 +1,106 @@
+{
+  "entryPoints": [
+    "packages/core/src/index.ts",
+    "packages/agent/src/index.ts",
+    "packages/tool-review/src/index.ts",
+    "packages/policy/src/index.ts",
+    "packages/secrets/src/index.ts",
+    "packages/mcp/src/index.ts",
+    "packages/types/src/index.ts"
+  ],
+  "out": "apps/docs/api",
+  "name": "Symbiont JavaScript SDK",
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "skipErrorChecking": true,
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "Core",
+    "Agents",
+    "Tool Review",
+    "Policies",
+    "Secrets",
+    "MCP",
+    "Types",
+    "*"
+  ],
+  "groupOrder": [
+    "Classes",
+    "Functions",
+    "Interfaces",
+    "Type Aliases",
+    "Variables"
+  ],
+  "sort": [
+    "source-order"
+  ],
+  "kindSortOrder": [
+    "Class",
+    "Constructor",
+    "Property",
+    "Method",
+    "Function",
+    "Interface",
+    "TypeAlias",
+    "Variable"
+  ],
+  "theme": "default",
+  "cleanOutputDir": true,
+  "includeVersion": true,
+  "searchInComments": true,
+  "treatWarningsAsErrors": false,
+  "validation": {
+    "notExported": false,
+    "invalidLink": false,
+    "notDocumented": false
+  },
+  "commentStyle": "all",
+  "blockTags": [
+    "@alpha",
+    "@beta",
+    "@deprecated",
+    "@example",
+    "@experimental",
+    "@internal",
+    "@override",
+    "@packageDocumentation",
+    "@param",
+    "@privateRemarks",
+    "@public",
+    "@readonly",
+    "@remarks",
+    "@returns",
+    "@sealed",
+    "@see",
+    "@since",
+    "@throws",
+    "@typeParam",
+    "@virtual"
+  ],
+  "inlineTags": [
+    "@inheritDoc",
+    "@label",
+    "@link",
+    "@linkcode",
+    "@linkplain"
+  ],
+  "modifierTags": [
+    "@abstract",
+    "@async",
+    "@eventProperty",
+    "@hidden",
+    "@ignore",
+    "@internal",
+    "@override",
+    "@package",
+    "@private",
+    "@protected",
+    "@public",
+    "@readonly",
+    "@sealed",
+    "@static",
+    "@virtual"
+  ]
+}

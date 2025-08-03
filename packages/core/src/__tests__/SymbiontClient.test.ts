@@ -129,7 +129,7 @@ describe('SymbiontClient', () => {
 
     it('should throw error for unimplemented policies client', () => {
       expect(() => {
-        client.policies;
+        return client.policies;
       }).toThrow('PolicyClient not yet implemented');
     });
 
@@ -173,6 +173,9 @@ describe('SymbiontClient', () => {
 
     beforeEach(() => {
       client = new SymbiontClient(mockConfig);
+      // Replace the internal auth manager with our mock
+      const mocks = testEnv.getMocks();
+      (client as any).authManager = mocks.auth;
     });
 
     it('should connect successfully with healthy API', async () => {
@@ -224,14 +227,18 @@ describe('SymbiontClient', () => {
     });
 
     it('should return unhealthy status on error', async () => {
-      // Mock the health method to throw an error
-      vi.spyOn(client, 'health').mockImplementation(async () => {
+      // Mock Date.now to throw an error, which will be caught by health method
+      const originalDateNow = Date.now;
+      Date.now = vi.fn().mockImplementation(() => {
         throw new Error('Health check failed');
       });
 
       const health = await client.health();
       expect(health.status).toBe('unhealthy');
       expect(health.timestamp).toBeDefined();
+      
+      // Restore original Date.now
+      Date.now = originalDateNow;
     });
   });
 
@@ -240,6 +247,9 @@ describe('SymbiontClient', () => {
 
     beforeEach(() => {
       client = new SymbiontClient(mockConfig);
+      // Replace the internal auth manager with our mock
+      const mocks = testEnv.getMocks();
+      (client as any).authManager = mocks.auth;
     });
 
     it('should get auth headers for endpoint', async () => {
