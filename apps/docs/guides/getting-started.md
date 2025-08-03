@@ -2,6 +2,54 @@
 
 Welcome to the Symbiont JavaScript SDK! This guide will help you get up and running quickly with building and deploying AI agents.
 
+## 🏗️ Prerequisites
+
+The Symbiont SDK requires a running Symbiont runtime to function. Before installing the SDK, ensure you have the runtime available:
+
+### Option 1: Docker (Recommended for Quick Start)
+
+```bash
+# Start Symbiont runtime with Docker
+docker run --rm -p 8080:8080 ghcr.io/thirdkeyai/symbi:latest mcp
+
+# Or run in background
+docker run -d --name symbiont-runtime -p 8080:8080 ghcr.io/thirdkeyai/symbi:latest mcp
+```
+
+### Option 2: Build from Source
+
+```bash
+# Clone the runtime repository
+git clone https://github.com/thirdkeyai/symbiont
+cd symbiont
+
+# Build the runtime
+cargo build --release
+
+# Start the MCP server
+cargo run -- mcp --port 8080
+```
+
+### Option 3: Use Pre-built Binary
+
+Download the latest release from [GitHub Releases](https://github.com/thirdkeyai/symbiont/releases) and run:
+
+```bash
+# Extract and run
+./symbi mcp --port 8080
+```
+
+### Verify Runtime is Running
+
+Test that the runtime is accessible:
+
+```bash
+# Check health endpoint
+curl http://localhost:8080/health
+
+# Expected response: {"status":"healthy","version":"..."}
+```
+
 ## 📦 Installation
 
 ### Basic Installation

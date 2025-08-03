@@ -8,6 +8,25 @@ A comprehensive, type-safe JavaScript/TypeScript SDK for building and managing A
 
 ## 🚀 Quick Start
 
+### Prerequisites
+
+The Symbiont SDK requires a running Symbiont runtime. Choose one of these options:
+
+#### Option 1: Docker (Recommended)
+```bash
+# Start Symbiont runtime with Docker
+docker run --rm -p 8080:8080 ghcr.io/thirdkeyai/symbi:latest mcp
+```
+
+#### Option 2: Build from Source
+```bash
+# Clone and build the runtime
+git clone https://github.com/thirdkeyai/symbiont
+cd symbiont
+cargo build --release
+cargo run -- mcp --port 8080
+```
+
 ### Installation
 
 ```bash
