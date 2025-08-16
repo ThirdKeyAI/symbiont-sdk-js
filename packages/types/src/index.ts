@@ -23,6 +23,15 @@ export * from './secrets';
 // MCP types
 export * from './mcp';
 
+// Memory types
+export * from './memory';
+
+// Vector types
+export * from './vector';
+
+// HTTP types
+export * from './http';
+
 // Common utility types
 export interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';

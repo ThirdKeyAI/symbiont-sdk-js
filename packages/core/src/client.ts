@@ -1,11 +1,13 @@
-import { SymbiontConfig, HealthStatus } from '@symbiont/types';
+import { SymbiontConfig, EnhancedSymbiontConfig, HealthStatus } from '@symbiont/types';
 import { AuthenticationManager } from './auth';
+import { EnvManager } from './config';
 
 /**
  * Main Symbiont SDK client providing unified access to both Runtime and Tool Review APIs
  */
 export class SymbiontClient {
   private config: SymbiontConfig;
+  private enhancedConfig?: EnhancedSymbiontConfig;
   private authManager: AuthenticationManager;
   
   // Lazy-loaded specialized clients
@@ -14,13 +16,22 @@ export class SymbiontClient {
   private _secrets?: any; // SecretsClient
   private _toolReview?: any; // ToolReviewClient
   private _mcp?: any; // McpClient
+  private _http?: any; // HttpEndpointManager
 
   /**
    * Create a new Symbiont SDK client
-   * @param config - Configuration for the SDK
+   * @param config - Configuration for the SDK (supports both legacy and enhanced formats)
    */
-  constructor(config: SymbiontConfig) {
-    this.config = this.validateAndNormalizeConfig(config);
+  constructor(config: SymbiontConfig | EnhancedSymbiontConfig) {
+    // Detect if this is an enhanced config or legacy config
+    if (this.isEnhancedConfig(config)) {
+      this.enhancedConfig = this.validateAndNormalizeEnhancedConfig(config);
+      this.config = this.convertToLegacyConfig(this.enhancedConfig);
+    } else {
+      this.config = this.validateAndNormalizeConfig(config);
+      // Also parse environment variables for enhanced features
+      this.enhancedConfig = this.createEnhancedConfigFromLegacy(this.config);
+    }
     
     // Initialize secrets manager first
     const secretsManager = this.initializeSecretsManager();
@@ -28,14 +39,154 @@ export class SymbiontClient {
     // Pass secrets manager to auth manager
     this.authManager = new AuthenticationManager(this.config, secretsManager);
     
-    if (this.config.debug) {
+    if (this.config.debug || this.enhancedConfig?.debug) {
       console.log('SymbiontClient initialized with config:', {
         runtimeApiUrl: this.config.runtimeApiUrl,
         toolReviewApiUrl: this.config.toolReviewApiUrl,
         validationMode: this.config.validationMode,
         environment: this.config.environment,
+        configType: this.enhancedConfig ? 'enhanced' : 'legacy',
       });
     }
+  }
+
+  /**
+   * Check if the provided config is an enhanced config
+   */
+  private isEnhancedConfig(config: any): config is EnhancedSymbiontConfig {
+    return config.client !== undefined || config.auth !== undefined;
+  }
+
+  /**
+   * Validate and normalize enhanced configuration with environment variable support
+   */
+  private validateAndNormalizeEnhancedConfig(config: EnhancedSymbiontConfig): EnhancedSymbiontConfig {
+    // Parse environment variables
+    const envConfig = EnvManager.parseEnvironment();
+    
+    // Safely merge configurations with proper type handling
+    const mergedConfig: EnhancedSymbiontConfig = {
+      client: { ...envConfig.client, ...config.client },
+      auth: {
+        ...envConfig.auth,
+        ...config.auth,
+        strategy: config.auth?.strategy || envConfig.auth.strategy || 'jwt'
+      },
+      vector: config.vector || envConfig.vector ? {
+        provider: 'qdrant',
+        ...envConfig.vector,
+        ...config.vector
+      } : undefined,
+      database: config.database || envConfig.database ? {
+        provider: 'postgresql',
+        ...envConfig.database,
+        ...config.database
+      } : undefined,
+      logging: config.logging || envConfig.logging ? {
+        level: 'info' as const,
+        format: 'simple' as const,
+        ...envConfig.logging,
+        ...config.logging
+      } : undefined,
+      environment: (config.environment || envConfig.environment) as 'development' | 'staging' | 'production',
+      debug: config.debug !== undefined ? config.debug : envConfig.debug,
+      validationMode: config.validationMode || 'development',
+      secretsFile: config.secretsFile,
+    };
+
+    // Set default API URLs based on environment if not provided
+    if (!mergedConfig.client.runtimeApiUrl) {
+      switch (mergedConfig.environment) {
+        case 'production':
+          mergedConfig.client.runtimeApiUrl = 'https://api.symbiont.com';
+          break;
+        case 'staging':
+          mergedConfig.client.runtimeApiUrl = 'https://staging-api.symbiont.com';
+          break;
+        default:
+          mergedConfig.client.runtimeApiUrl = 'https://dev-api.symbiont.com';
+      }
+    }
+
+    if (!mergedConfig.client.toolReviewApiUrl) {
+      switch (mergedConfig.environment) {
+        case 'production':
+          mergedConfig.client.toolReviewApiUrl = 'https://tool-review.symbiont.com';
+          break;
+        case 'staging':
+          mergedConfig.client.toolReviewApiUrl = 'https://staging-tool-review.symbiont.com';
+          break;
+        default:
+          mergedConfig.client.toolReviewApiUrl = 'https://dev-tool-review.symbiont.com';
+      }
+    }
+
+    // Validate that at least one authentication method is provided
+    if (!mergedConfig.auth.apiKey && !mergedConfig.auth.jwt?.accessToken) {
+      throw new Error('Either auth.apiKey or auth.jwt.accessToken must be provided for authentication');
+    }
+
+    return mergedConfig;
+  }
+
+  /**
+   * Convert enhanced config to legacy format for backward compatibility
+   */
+  private convertToLegacyConfig(enhancedConfig: EnhancedSymbiontConfig): SymbiontConfig {
+    return {
+      runtimeApiUrl: enhancedConfig.client.runtimeApiUrl,
+      toolReviewApiUrl: enhancedConfig.client.toolReviewApiUrl,
+      apiKey: enhancedConfig.auth.apiKey,
+      jwt: enhancedConfig.auth.jwt?.accessToken,
+      validationMode: enhancedConfig.validationMode,
+      environment: enhancedConfig.environment,
+      timeout: enhancedConfig.client.timeout,
+      retryConfig: enhancedConfig.client.retryConfig,
+      cacheConfig: enhancedConfig.client.cacheConfig,
+      debug: enhancedConfig.debug,
+      secretsFile: enhancedConfig.secretsFile,
+    };
+  }
+
+  /**
+   * Create enhanced config from legacy config by parsing environment variables
+   */
+  private createEnhancedConfigFromLegacy(legacyConfig: SymbiontConfig): EnhancedSymbiontConfig {
+    const envConfig = EnvManager.parseEnvironment();
+    
+    return {
+      client: {
+        runtimeApiUrl: legacyConfig.runtimeApiUrl || envConfig.client.runtimeApiUrl,
+        toolReviewApiUrl: legacyConfig.toolReviewApiUrl || envConfig.client.toolReviewApiUrl,
+        timeout: legacyConfig.timeout || envConfig.client.timeout,
+        retryConfig: legacyConfig.retryConfig || envConfig.client.retryConfig,
+        cacheConfig: legacyConfig.cacheConfig || envConfig.client.cacheConfig,
+        ...envConfig.client,
+      },
+      auth: {
+        strategy: 'jwt' as const,
+        apiKey: legacyConfig.apiKey || envConfig.auth.apiKey,
+        jwt: legacyConfig.jwt ? { accessToken: legacyConfig.jwt } : envConfig.auth.jwt,
+        ...envConfig.auth,
+      },
+      vector: envConfig.vector ? {
+        provider: 'qdrant' as const,
+        ...envConfig.vector
+      } : undefined,
+      database: envConfig.database ? {
+        provider: 'postgresql' as const,
+        ...envConfig.database
+      } : undefined,
+      logging: envConfig.logging ? {
+        level: 'info' as const,
+        format: 'simple' as const,
+        ...envConfig.logging
+      } : undefined,
+      environment: (legacyConfig.environment || envConfig.environment) as 'development' | 'staging' | 'production',
+      debug: legacyConfig.debug !== undefined ? legacyConfig.debug : envConfig.debug,
+      validationMode: legacyConfig.validationMode,
+      secretsFile: legacyConfig.secretsFile,
+    };
   }
 
   /**
@@ -159,6 +310,31 @@ export class SymbiontClient {
       this._mcp = new McpClient(this);
     }
     return this._mcp;
+  }
+
+  /**
+   * Lazy-loaded HTTP endpoint manager
+   */
+  get http(): any {
+    if (!this._http) {
+      // Dynamic import to avoid circular dependencies
+      const { HttpEndpointManager } = require('./http');
+      
+      // Get HTTP configuration with defaults
+      const httpConfig = {
+        port: 3000,
+        host: '0.0.0.0',
+        cors: true,
+        logging: this.config.debug || false,
+        metrics: true,
+      };
+      
+      // Get auth manager for authentication integration
+      const authManager = this.authManager;
+      
+      this._http = new HttpEndpointManager(httpConfig, authManager);
+    }
+    return this._http;
   }
 
   /**

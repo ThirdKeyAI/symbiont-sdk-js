@@ -11,5 +11,21 @@ export { SymbiontClient } from './client';
 // Export authentication utilities
 export { AuthenticationManager, MemoryTokenCache } from './auth';
 
+// Export memory system implementations
+export {
+  MemoryStore,
+  InMemoryStore,
+  HierarchicalMemory,
+  MemoryManager,
+  MemoryManagerConfig
+} from './memory';
+
+// Export vector system implementations
+export * from './vector';
+
+// Export HTTP endpoint management
+export { HttpEndpointManager } from './http';
+export { EndpointMetrics as EndpointMetricsClass } from './http';
+
 // Default export is the main client
 export { SymbiontClient as default } from './client';
