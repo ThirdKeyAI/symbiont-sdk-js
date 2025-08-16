@@ -1,4 +1,4 @@
-import { QdrantClient } from '@qdrant/js-client';
+import { QdrantClient } from '@qdrant/qdrant-js';
 import { VectorConfig } from '../../config/VectorConfig';
 import {
   Collection,

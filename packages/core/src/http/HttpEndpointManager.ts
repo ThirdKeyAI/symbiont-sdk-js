@@ -80,7 +80,7 @@ export class HttpEndpointManager extends EventEmitter {
     }
 
     return new Promise((resolve, reject) => {
-      this.server = this.app.listen(this.config.port, this.config.host, () => {
+      this.server = this.app.listen(this.config.port || 3000, this.config.host || 'localhost', () => {
         this.isStarted = true;
         this.emit('started', {
           port: this.config.port,
@@ -397,7 +397,7 @@ export class HttpEndpointManager extends EventEmitter {
     metrics: EndpointMetrics,
     auth?: AuthRequirement
   ): EndpointHandler {
-    return async (req: Request, res: Response, next: NextFunction) => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       const startTime = Date.now();
       metrics.startRequest();
 
@@ -407,7 +407,8 @@ export class HttpEndpointManager extends EventEmitter {
           const authHeader = req.headers.authorization;
           if (!authHeader) {
             metrics.recordError(401);
-            return res.status(401).json({ error: 'Authentication required' });
+            res.status(401).json({ error: 'Authentication required' });
+            return;
           }
 
           try {
@@ -420,7 +421,8 @@ export class HttpEndpointManager extends EventEmitter {
               const hasRequiredRole = auth.roles.some(role => userRoles.includes(role));
               if (!hasRequiredRole) {
                 metrics.recordError(403);
-                return res.status(403).json({ error: 'Insufficient permissions' });
+                res.status(403).json({ error: 'Insufficient permissions' });
+                return;
               }
             }
 
@@ -428,7 +430,8 @@ export class HttpEndpointManager extends EventEmitter {
             (req as Request & { user: AuthUser }).user = user;
           } catch {
             metrics.recordError(401);
-            return res.status(401).json({ error: 'Invalid token' });
+            res.status(401).json({ error: 'Invalid token' });
+            return;
           }
         }
 

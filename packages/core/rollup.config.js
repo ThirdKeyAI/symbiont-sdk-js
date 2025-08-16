@@ -1,6 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
+import json from '@rollup/plugin-json';
 
 export default [
   // ESM and CJS library builds
@@ -18,10 +19,26 @@ export default [
         sourcemap: true
       }
     ],
-    external: ['@symbiont/types'],
+    external: [
+      '@symbiont/types',
+      '@qdrant/qdrant-js',
+      'express',
+      'jsonwebtoken',
+      'bcrypt',
+      'crypto',
+      'fs',
+      'path',
+      'http',
+      'https',
+      'url',
+      'events',
+      'stream',
+      'util'
+    ],
     plugins: [
       resolve(),
       commonjs(),
+      json(),
       typescript({
         tsconfig: './tsconfig.json'
       })
