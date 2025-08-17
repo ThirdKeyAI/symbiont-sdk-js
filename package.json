@@ -1,7 +1,6 @@
 {
   "name": "symbiont-sdk-js",
   "version": "0.3.1",
-  "private": true,
   "description": "Symbiont JavaScript SDK - Monorepo",
   "workspaces": [
     "packages/*",
@@ -52,7 +51,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/symbiont/symbiont-sdk-js.git"
+    "url": "https://github.com/ThirdKeyAI/symbiont-sdk-js.git"
   },
+  "author": "Jascha Wanger \\ ThirdKey.ai",
   "license": "MIT"
 }
