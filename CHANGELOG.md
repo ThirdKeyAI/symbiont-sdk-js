@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-02-07
+
+### Added
+
+#### Scheduling Parity & API Alignment
+- **SchedulerHealthClient** — `getSchedulerHealth()` method on `ScheduleClient` covering `GET /health/scheduler` with full 13-field `SchedulerHealthResponse`
+- **WorkflowClient** — New client for `POST /workflows/execute` endpoint
+- **SystemClient** — New client covering `GET /health` and `GET /metrics` endpoints
+- **SymbiontClient integration** — Added `schedules`, `workflows`, and `system` getters on `SymbiontClient` for direct access to all clients
+- **Real health checks** — `SymbiontClient.health()` now makes actual API calls via `SystemClient` instead of returning mock data
+
+#### Shared Types (`@symbiont/types`)
+- `packages/types/src/schedule.ts` — All schedule interfaces (`CreateScheduleRequest`, `ScheduleSummary`, `ScheduleDetail`, `SchedulerHealthResponse`, etc.) with Zod schemas
+- `packages/types/src/system.ts` — System types (`HealthResponse`, `WorkflowExecutionRequest`, `ErrorResponse`) with Zod schemas
+
+#### Test Coverage
+- **ScheduleClient integration tests** — 25 test cases covering all 11 methods plus error handling (empty IDs, 401, 404, 500)
+- Schedule mock data added to `@symbiont/testing`
+
+### Changed
+- `ScheduleClient` now imports types from `@symbiont/types` instead of defining them inline
+- Schedule types re-exported from `@symbiont/agent` for backward compatibility
+
+---
+
 ## [0.3.1] - 2025-01-16
 
 ### Added

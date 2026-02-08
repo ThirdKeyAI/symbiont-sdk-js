@@ -27,5 +27,8 @@ export * from './vector';
 export { HttpEndpointManager } from './http';
 export { EndpointMetrics as EndpointMetricsClass } from './http';
 
+// Export system client
+export { SystemClient } from './SystemClient';
+
 // Default export is the main client
 export { SymbiontClient as default } from './client';

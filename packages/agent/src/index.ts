@@ -18,7 +18,12 @@ export type {
   NextRunsResponse,
   ScheduleActionResponse,
   DeleteScheduleResponse,
+  SchedulerHealthResponse,
 } from './ScheduleClient';
+
+// Export the WorkflowClient
+export { WorkflowClient } from './WorkflowClient';
+export type { WorkflowExecutionRequest } from '@symbiont/types';
 
 // Re-export agent-related types from @symbiont/types for convenience
 export type {

@@ -32,6 +32,12 @@ export * from './vector';
 // HTTP types
 export * from './http';
 
+// Schedule types
+export * from './schedule';
+
+// System types
+export * from './system';
+
 // Common utility types
 export interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';

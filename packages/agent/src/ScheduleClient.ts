@@ -1,6 +1,17 @@
 import {
   RequestOptions,
   SymbiontConfig,
+  CreateScheduleRequest,
+  CreateScheduleResponse,
+  UpdateScheduleRequest,
+  ScheduleSummary,
+  ScheduleDetail,
+  ScheduleRunEntry,
+  ScheduleHistoryResponse,
+  NextRunsResponse,
+  ScheduleActionResponse,
+  DeleteScheduleResponse,
+  SchedulerHealthResponse,
 } from '@symbiont/types';
 
 /**
@@ -11,94 +22,20 @@ interface ClientDependency {
   configuration: Readonly<SymbiontConfig>;
 }
 
-/** Request to create a new scheduled job. */
-export interface CreateScheduleRequest {
-  name: string;
-  cron_expression: string;
-  timezone?: string;
-  agent_name: string;
-  policy_ids?: string[];
-  one_shot?: boolean;
-}
-
-/** Response after creating a schedule. */
-export interface CreateScheduleResponse {
-  job_id: string;
-  next_run: string | null;
-  status: string;
-}
-
-/** Request to update an existing schedule. */
-export interface UpdateScheduleRequest {
-  cron_expression?: string;
-  timezone?: string;
-  policy_ids?: string[];
-  one_shot?: boolean;
-}
-
-/** Summary of a scheduled job. */
-export interface ScheduleSummary {
-  job_id: string;
-  name: string;
-  cron_expression: string;
-  timezone: string;
-  status: string;
-  enabled: boolean;
-  next_run: string | null;
-  run_count: number;
-}
-
-/** Detailed schedule information. */
-export interface ScheduleDetail {
-  job_id: string;
-  name: string;
-  cron_expression: string;
-  timezone: string;
-  status: string;
-  enabled: boolean;
-  one_shot: boolean;
-  next_run: string | null;
-  last_run: string | null;
-  run_count: number;
-  failure_count: number;
-  created_at: string;
-  updated_at: string;
-}
-
-/** A single run history entry. */
-export interface ScheduleRunEntry {
-  run_id: string;
-  started_at: string;
-  completed_at: string | null;
-  status: string;
-  error: string | null;
-  execution_time_ms: number | null;
-}
-
-/** Response for schedule history. */
-export interface ScheduleHistoryResponse {
-  job_id: string;
-  history: ScheduleRunEntry[];
-}
-
-/** Response for next run times. */
-export interface NextRunsResponse {
-  job_id: string;
-  next_runs: string[];
-}
-
-/** Generic action response. */
-export interface ScheduleActionResponse {
-  job_id: string;
-  action: string;
-  status: string;
-}
-
-/** Delete response. */
-export interface DeleteScheduleResponse {
-  job_id: string;
-  deleted: boolean;
-}
+// Re-export schedule types for backward compatibility
+export type {
+  CreateScheduleRequest,
+  CreateScheduleResponse,
+  UpdateScheduleRequest,
+  ScheduleSummary,
+  ScheduleDetail,
+  ScheduleRunEntry,
+  ScheduleHistoryResponse,
+  NextRunsResponse,
+  ScheduleActionResponse,
+  DeleteScheduleResponse,
+  SchedulerHealthResponse,
+};
 
 /**
  * Client for managing cron schedules via the Symbiont Runtime API
@@ -206,6 +143,13 @@ export class ScheduleClient {
       `/schedules/${jobId}/next-runs?${params}`,
       { method: 'GET' }
     );
+  }
+
+  /** Get scheduler health status. GET /health/scheduler */
+  async getSchedulerHealth(): Promise<SchedulerHealthResponse> {
+    return this.makeRequest<SchedulerHealthResponse>('/health/scheduler', {
+      method: 'GET',
+    });
   }
 
   /**

@@ -1,6 +1,7 @@
-import { SymbiontConfig, EnhancedSymbiontConfig, HealthStatus } from '@symbiont/types';
+import { SymbiontConfig, EnhancedSymbiontConfig, HealthStatus, HealthResponse } from '@symbiont/types';
 import { AuthenticationManager } from './auth';
 import { EnvManager } from './config';
+import { SystemClient } from './SystemClient';
 
 /**
  * Main Symbiont SDK client providing unified access to both Runtime and Tool Review APIs
@@ -12,6 +13,9 @@ export class SymbiontClient {
   
   // Lazy-loaded specialized clients
   private _agents?: any; // AgentClient - loaded dynamically to avoid circular deps
+  private _schedules?: any; // ScheduleClient
+  private _workflows?: any; // WorkflowClient
+  private _system?: any; // SystemClient
   private _policies?: any; // PolicyClient
   private _secrets?: any; // SecretsClient
   private _toolReview?: any; // ToolReviewClient
@@ -245,6 +249,38 @@ export class SymbiontClient {
   }
 
   /**
+   * Lazy-loaded schedules client
+   */
+  get schedules(): any {
+    if (!this._schedules) {
+      const { ScheduleClient } = require('@symbiont/agent');
+      this._schedules = new ScheduleClient(this);
+    }
+    return this._schedules;
+  }
+
+  /**
+   * Lazy-loaded workflows client
+   */
+  get workflows(): any {
+    if (!this._workflows) {
+      const { WorkflowClient } = require('@symbiont/agent');
+      this._workflows = new WorkflowClient(this);
+    }
+    return this._workflows;
+  }
+
+  /**
+   * Lazy-loaded system client
+   */
+  get system(): any {
+    if (!this._system) {
+      this._system = new SystemClient(this);
+    }
+    return this._system;
+  }
+
+  /**
    * Lazy-loaded policies client
    */
   get policies(): any {
@@ -379,15 +415,17 @@ export class SymbiontClient {
    */
   async health(): Promise<HealthStatus> {
     try {
-      // For now, return a mock health status
-      // In future phases, this will make actual API calls
+      const response: HealthResponse = await this.system.health();
       return {
         status: 'healthy',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0',
-        uptime: Date.now(),
+        timestamp: response.timestamp,
+        version: response.version,
+        uptime: response.uptime_seconds * 1000,
       };
-    } catch {
+    } catch (err) {
+      if (this.config.debug) {
+        console.error('Health check failed:', err);
+      }
       return {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),

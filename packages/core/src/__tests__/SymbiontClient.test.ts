@@ -181,6 +181,16 @@ describe('SymbiontClient', () => {
     it('should connect successfully with healthy API', async () => {
       const mocks = testEnv.getMocks();
       mocks.auth.setHealthy(true);
+      // Mock /health to return HealthResponse format expected by SystemClient
+      mocks.fetch.mockResponse('/health', {
+        status: 200,
+        body: {
+          status: 'healthy',
+          uptime_seconds: 86400,
+          timestamp: new Date().toISOString(),
+          version: '1.0.0',
+        },
+      });
 
       await expect(client.connect()).resolves.toBeUndefined();
       expect(mocks.auth.getRefreshCallCount()).toBe(1);
@@ -218,6 +228,18 @@ describe('SymbiontClient', () => {
     });
 
     it('should return healthy status', async () => {
+      const mocks = testEnv.getMocks();
+      // Mock /health to return HealthResponse format expected by SystemClient
+      mocks.fetch.mockResponse('/health', {
+        status: 200,
+        body: {
+          status: 'healthy',
+          uptime_seconds: 86400,
+          timestamp: '2024-01-01T00:00:00.000Z',
+          version: '1.0.0',
+        },
+      });
+
       const health = await client.health();
 
       expect(health.status).toBe('healthy');
@@ -227,18 +249,16 @@ describe('SymbiontClient', () => {
     });
 
     it('should return unhealthy status on error', async () => {
-      // Mock Date.now to throw an error, which will be caught by health method
-      const originalDateNow = Date.now;
-      Date.now = vi.fn().mockImplementation(() => {
-        throw new Error('Health check failed');
+      const mocks = testEnv.getMocks();
+      // Mock /health to return a server error so SystemClient.health() throws
+      mocks.fetch.mockResponse('/health', {
+        status: 500,
+        body: { error: 'Internal Server Error' },
       });
 
       const health = await client.health();
       expect(health.status).toBe('unhealthy');
       expect(health.timestamp).toBeDefined();
-      
-      // Restore original Date.now
-      Date.now = originalDateNow;
     });
   });
 

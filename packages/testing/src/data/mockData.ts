@@ -1,4 +1,14 @@
-import { HealthStatus } from '@symbiont/types';
+import {
+  HealthStatus,
+  ScheduleSummary,
+  ScheduleDetail,
+  CreateScheduleResponse,
+  ScheduleHistoryResponse,
+  NextRunsResponse,
+  ScheduleActionResponse,
+  DeleteScheduleResponse,
+  SchedulerHealthResponse,
+} from '@symbiont/types';
 
 /**
  * Mock data for API responses and testing
@@ -158,6 +168,110 @@ export const mockApiResponses = {
       expiresAt: new Date(Date.now() + 7200000).toISOString()
     }
   }
+};
+
+// Schedule mock data
+export const mockScheduleSummaries: ScheduleSummary[] = [
+  {
+    job_id: 'job-1',
+    name: 'Daily Report',
+    cron_expression: '0 9 * * *',
+    timezone: 'UTC',
+    status: 'active',
+    enabled: true,
+    next_run: '2024-01-02T09:00:00Z',
+    run_count: 10,
+  },
+  {
+    job_id: 'job-2',
+    name: 'Hourly Sync',
+    cron_expression: '0 * * * *',
+    timezone: 'America/New_York',
+    status: 'active',
+    enabled: true,
+    next_run: '2024-01-01T13:00:00Z',
+    run_count: 24,
+  },
+];
+
+export const mockScheduleDetail: ScheduleDetail = {
+  job_id: 'job-1',
+  name: 'Daily Report',
+  cron_expression: '0 9 * * *',
+  timezone: 'UTC',
+  status: 'active',
+  enabled: true,
+  one_shot: false,
+  next_run: '2024-01-02T09:00:00Z',
+  last_run: '2024-01-01T09:00:00Z',
+  run_count: 10,
+  failure_count: 1,
+  created_at: '2023-12-01T00:00:00Z',
+  updated_at: '2024-01-01T09:00:00Z',
+};
+
+export const mockCreateScheduleResponse: CreateScheduleResponse = {
+  job_id: 'job-new',
+  next_run: '2024-01-02T09:00:00Z',
+  status: 'active',
+};
+
+export const mockScheduleHistory: ScheduleHistoryResponse = {
+  job_id: 'job-1',
+  history: [
+    {
+      run_id: 'run-1',
+      started_at: '2024-01-01T09:00:00Z',
+      completed_at: '2024-01-01T09:01:30Z',
+      status: 'success',
+      error: null,
+      execution_time_ms: 90000,
+    },
+    {
+      run_id: 'run-2',
+      started_at: '2023-12-31T09:00:00Z',
+      completed_at: '2023-12-31T09:00:45Z',
+      status: 'success',
+      error: null,
+      execution_time_ms: 45000,
+    },
+  ],
+};
+
+export const mockNextRuns: NextRunsResponse = {
+  job_id: 'job-1',
+  next_runs: [
+    '2024-01-02T09:00:00Z',
+    '2024-01-03T09:00:00Z',
+    '2024-01-04T09:00:00Z',
+  ],
+};
+
+export const mockScheduleAction: ScheduleActionResponse = {
+  job_id: 'job-1',
+  action: 'pause',
+  status: 'ok',
+};
+
+export const mockDeleteSchedule: DeleteScheduleResponse = {
+  job_id: 'job-1',
+  deleted: true,
+};
+
+export const mockSchedulerHealth: SchedulerHealthResponse = {
+  is_running: true,
+  store_accessible: true,
+  jobs_total: 5,
+  jobs_active: 3,
+  jobs_paused: 1,
+  jobs_dead_letter: 1,
+  global_active_runs: 2,
+  max_concurrent: 10,
+  runs_total: 150,
+  runs_succeeded: 140,
+  runs_failed: 10,
+  average_execution_time_ms: 5000,
+  longest_run_ms: 30000,
 };
 
 export const mockErrorResponses = {
