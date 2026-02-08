@@ -21,6 +21,22 @@ export type {
   SchedulerHealthResponse,
 } from './ScheduleClient';
 
+// Export the ChannelClient
+export { ChannelClient } from './ChannelClient';
+export type {
+  RegisterChannelRequest,
+  RegisterChannelResponse,
+  UpdateChannelRequest,
+  ChannelSummary,
+  ChannelDetail,
+  ChannelActionResponse,
+  DeleteChannelResponse,
+  ChannelHealthResponse,
+  IdentityMappingEntry,
+  AddIdentityMappingRequest,
+  ChannelAuditResponse,
+} from './ChannelClient';
+
 // Export the WorkflowClient
 export { WorkflowClient } from './WorkflowClient';
 export type { WorkflowExecutionRequest } from '@symbiont/types';

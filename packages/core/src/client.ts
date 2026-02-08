@@ -14,6 +14,7 @@ export class SymbiontClient {
   // Lazy-loaded specialized clients
   private _agents?: any; // AgentClient - loaded dynamically to avoid circular deps
   private _schedules?: any; // ScheduleClient
+  private _channels?: any; // ChannelClient
   private _workflows?: any; // WorkflowClient
   private _system?: any; // SystemClient
   private _policies?: any; // PolicyClient
@@ -257,6 +258,17 @@ export class SymbiontClient {
       this._schedules = new ScheduleClient(this);
     }
     return this._schedules;
+  }
+
+  /**
+   * Lazy-loaded channels client
+   */
+  get channels(): any {
+    if (!this._channels) {
+      const { ChannelClient } = require('@symbiont/agent');
+      this._channels = new ChannelClient(this);
+    }
+    return this._channels;
   }
 
   /**

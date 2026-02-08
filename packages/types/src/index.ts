@@ -35,6 +35,9 @@ export * from './http';
 // Schedule types
 export * from './schedule';
 
+// Channel types
+export * from './channel';
+
 // System types
 export * from './system';
 

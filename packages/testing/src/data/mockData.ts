@@ -8,6 +8,14 @@ import {
   ScheduleActionResponse,
   DeleteScheduleResponse,
   SchedulerHealthResponse,
+  ChannelSummary,
+  ChannelDetail,
+  RegisterChannelResponse,
+  ChannelActionResponse,
+  DeleteChannelResponse,
+  ChannelHealthResponse,
+  IdentityMappingEntry,
+  ChannelAuditResponse,
 } from '@symbiont/types';
 
 /**
@@ -272,6 +280,88 @@ export const mockSchedulerHealth: SchedulerHealthResponse = {
   runs_failed: 10,
   average_execution_time_ms: 5000,
   longest_run_ms: 30000,
+};
+
+// ── Channel mock data ──────────────────────────────────────────
+
+export const mockChannelSummaries: ChannelSummary[] = [
+  {
+    id: 'ch-1',
+    name: 'ops-slack',
+    platform: 'slack',
+    status: 'running',
+  },
+  {
+    id: 'ch-2',
+    name: 'eng-teams',
+    platform: 'teams',
+    status: 'stopped',
+  },
+];
+
+export const mockChannelDetail: ChannelDetail = {
+  id: 'ch-1',
+  name: 'ops-slack',
+  platform: 'slack',
+  status: 'running',
+  config: { bot_token: 'xoxb-***' },
+  created_at: '2024-01-01T00:00:00Z',
+  updated_at: '2024-01-01T00:00:00Z',
+};
+
+export const mockRegisterChannelResponse: RegisterChannelResponse = {
+  id: 'ch-new',
+  name: 'eng-teams',
+  platform: 'teams',
+  status: 'stopped',
+};
+
+export const mockChannelAction: ChannelActionResponse = {
+  id: 'ch-1',
+  action: 'start',
+  status: 'running',
+};
+
+export const mockDeleteChannel: DeleteChannelResponse = {
+  id: 'ch-1',
+  deleted: true,
+};
+
+export const mockChannelHealth: ChannelHealthResponse = {
+  id: 'ch-1',
+  connected: true,
+  platform: 'slack',
+  workspace_name: 'Acme Corp',
+  channels_active: 5,
+  last_message_at: '2024-01-01T12:00:00Z',
+  uptime_secs: 86400,
+};
+
+export const mockIdentityMappings: IdentityMappingEntry[] = [
+  {
+    platform_user_id: 'U123',
+    platform: 'slack',
+    symbiont_user_id: 'user@acme.com',
+    email: 'user@acme.com',
+    display_name: 'Alice',
+    roles: ['admin'],
+    verified: true,
+    created_at: '2024-01-01T00:00:00Z',
+  },
+];
+
+export const mockChannelAudit: ChannelAuditResponse = {
+  channel_id: 'ch-1',
+  entries: [
+    {
+      timestamp: '2024-01-01T12:00:00Z',
+      event_type: 'message_received',
+      user_id: 'U123',
+      channel_id: 'C456',
+      agent: 'helper',
+      details: { action: 'invoke' },
+    },
+  ],
 };
 
 export const mockErrorResponses = {
