@@ -37,6 +37,16 @@ export type {
   ChannelAuditResponse,
 } from './ChannelClient';
 
+// Export the AgentPinClient
+export { AgentPinClient } from './AgentPinClient';
+export type {
+  AgentPinVerificationResult,
+  AgentPinDiscoveryDocument,
+  AgentPinTrustBundle,
+  AgentPinVerifierConfig,
+  AgentPinCredentialRequest,
+} from './AgentPinClient';
+
 // Export the WorkflowClient
 export { WorkflowClient } from './WorkflowClient';
 export type { WorkflowExecutionRequest } from '@symbiont/types';

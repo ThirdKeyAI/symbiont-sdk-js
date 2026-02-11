@@ -41,6 +41,9 @@ export * from './channel';
 // System types
 export * from './system';
 
+// AgentPin types
+export * from './agentpin';
+
 // Common utility types
 export interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';

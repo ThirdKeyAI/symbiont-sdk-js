@@ -22,6 +22,7 @@ export class SymbiontClient {
   private _toolReview?: any; // ToolReviewClient
   private _mcp?: any; // McpClient
   private _http?: any; // HttpEndpointManager
+  private _agentpin?: any; // AgentPinClient
 
   /**
    * Create a new Symbiont SDK client
@@ -280,6 +281,17 @@ export class SymbiontClient {
       this._workflows = new WorkflowClient(this);
     }
     return this._workflows;
+  }
+
+  /**
+   * Lazy-loaded AgentPin client for credential verification and discovery
+   */
+  get agentpin(): any {
+    if (!this._agentpin) {
+      const { AgentPinClient } = require('@symbiont/agent');
+      this._agentpin = new AgentPinClient(this);
+    }
+    return this._agentpin;
   }
 
   /**
