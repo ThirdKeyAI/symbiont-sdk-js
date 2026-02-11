@@ -66,6 +66,7 @@ console.log('Result:', result.result);
 
 - **🤖 AI Agent Management** - Create, deploy, and execute intelligent agents
 - **🔐 Security-First** - Built-in policy management and secrets handling
+- **🔑 AgentPin Integration** - Client-side credential verification, discovery, and trust bundles
 - **🛡️ Type Safety** - Full TypeScript support with runtime validation
 - **⚡ High Performance** - Intelligent caching and optimized networking
 - **🔄 Auto-Authentication** - Seamless token management and refresh
@@ -100,6 +101,57 @@ Complete API documentation with examples and type definitions
 | **[@symbiont/secrets](./packages/secrets)** | Secure secrets management | `npm install @symbiont/secrets` |
 | **[@symbiont/tool-review](./packages/tool-review)** | Security review workflow | `npm install @symbiont/tool-review` |
 | **[@symbiont/mcp](./packages/mcp)** | MCP protocol integration | `npm install @symbiont/mcp` |
+
+## 🔑 AgentPin: Credential Verification
+
+The SDK integrates with [AgentPin](https://github.com/ThirdKeyAI/agentpin) for domain-anchored cryptographic identity verification of AI agents. AgentPin operations run client-side — no Symbiont Runtime required.
+
+### Key Generation & Credential Issuance
+
+```typescript
+const { privateKeyPem, publicKeyPem } = client.agentpin.generateKeyPair();
+const kid = client.agentpin.generateKeyId(publicKeyPem);
+
+const jwt = client.agentpin.issueCredential({
+  privateKeyPem,
+  kid,
+  issuer: 'example.com',
+  agentId: 'data-analyzer',
+  capabilities: ['read:data', 'write:reports'],
+  ttlSecs: 3600,
+});
+```
+
+### Credential Verification
+
+```typescript
+// Online verification (fetches discovery document automatically)
+const result = await client.agentpin.verifyCredential(jwt);
+console.log(result.valid, result.agent_id, result.capabilities);
+
+// Offline verification with pre-fetched documents
+const discovery = await client.agentpin.fetchDiscoveryDocument('example.com');
+const offlineResult = client.agentpin.verifyCredentialOffline(jwt, discovery);
+
+// Trust bundle verification (fully offline, no network)
+const bundle = client.agentpin.createTrustBundle();
+const bundleResult = client.agentpin.verifyCredentialWithBundle(jwt, bundle);
+```
+
+### Discovery & Key Pinning
+
+```typescript
+// Fetch and validate discovery documents
+const doc = await client.agentpin.fetchDiscoveryDocument('example.com');
+client.agentpin.validateDiscoveryDocument(doc, 'example.com');
+
+// TOFU key pinning
+const pinStore = client.agentpin.createPinStore();
+
+// JWK utilities
+const jwk = client.agentpin.pemToJwk(publicKeyPem, kid);
+const pem = client.agentpin.jwkToPem(jwk);
+```
 
 ## 🛠️ Configuration
 
