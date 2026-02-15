@@ -226,29 +226,132 @@ const secrets = new SecretManager({
 const apiKey = await secrets.getSecret('EXTERNAL_API_KEY');
 ```
 
-## 🆘 Getting Help
+## Webhook Verification
 
-- **[Complete Documentation](./apps/docs/README.md)** - Comprehensive guides and examples
-- **[API Reference](./apps/docs/api/index.html)** - Full API documentation
-- **[Examples](./apps/examples/)** - Working code examples
-- **[GitHub Issues](https://github.com/thirdkeyai/symbiont-sdk-js/issues)** - Bug reports and feature requests
+Verify inbound webhook signatures from GitHub, Stripe, Slack, or custom providers:
 
-## 🤝 Contributing
+```typescript
+import {
+    HmacVerifier, JwtVerifier, createProviderVerifier,
+} from '@symbiont/core';
 
-We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for development setup and guidelines.
+// Use a provider preset
+const verifier = createProviderVerifier('GITHUB', Buffer.from(secret));
+verifier.verify(request.headers, Buffer.from(request.body));
 
-```bash
-git clone https://github.com/thirdkeyai/symbiont-sdk-js
-cd symbiont-sdk-js
-npm install
-npm run build
-npm test
+// Manual HMAC with prefix stripping
+const hmac = new HmacVerifier(
+    Buffer.from(secret), 'X-Hub-Signature-256', 'sha256='
+);
+hmac.verify(headers, body);
+
+// JWT-based verification
+const jwtVerifier = new JwtVerifier(
+    Buffer.from(secret), 'Authorization', 'expected-issuer'
+);
+jwtVerifier.verify(headers, body);
 ```
 
-## 📄 License
+Provider presets: `GITHUB`, `STRIPE`, `SLACK`, `CUSTOM`.
 
-MIT License 
+## Markdown Memory Persistence
 
----
+File-based agent context that survives restarts:
 
-**Ready to build the future of AI?** [Get started now →](./apps/docs/guides/getting-started.md)
+```typescript
+import { MarkdownMemoryStore } from '@symbiont/core';
+
+const store = new MarkdownMemoryStore('/data/memory', 30);
+
+await store.saveContext('agent-1', {
+    agentId: 'agent-1',
+    facts: ['User prefers dark mode', 'Timezone is UTC-5'],
+    procedures: ['Always greet by name'],
+    learnedPatterns: ['Responds better to bullet points'],
+    metadata: { lastSession: '2026-02-15' },
+});
+
+const context = await store.loadContext('agent-1');
+const agents = await store.listAgentContexts();
+await store.compact('agent-1');
+const stats = await store.getStorageStats();
+```
+
+## Agent Skills (ClawHavoc Scanning)
+
+Scan and load agent skill definitions with security scanning:
+
+```typescript
+import { SkillScanner, SkillLoader } from '@symbiont/core';
+
+// Scan for security issues (10 built-in ClawHavoc rules)
+const scanner = new SkillScanner();
+const findings = scanner.scanContent(content, 'SKILL.md');
+
+// Scan an entire skill directory
+const result = scanner.scanSkill('/path/to/skill');
+
+// Load skills from paths
+const loader = new SkillLoader({
+    loadPaths: ['/skills/verified', '/skills/community'],
+    requireSigned: false,
+    scanEnabled: true,
+});
+
+const skills = loader.loadAll();
+const skill = loader.loadSkill('/path/to/skill');
+```
+
+Detects: pipe-to-shell, wget-pipe-to-shell, env file references, SOUL.md/memory.md tampering, eval+fetch, base64-decode-exec, rm-rf, chmod-777.
+
+## Metrics Collection & Export
+
+Runtime metrics retrieval and local export:
+
+```typescript
+import {
+    FileMetricsExporter, CompositeExporter, MetricsCollector,
+} from '@symbiont/core';
+
+// Fetch from runtime API
+const snapshot = await client.metricsClient.getSnapshot();
+const scheduler = await client.metricsClient.getSchedulerMetrics();
+const system = await client.metricsClient.getSystemMetrics();
+
+// Export to file (atomic JSON write)
+const exporter = new FileMetricsExporter({ filePath: '/tmp/metrics.json' });
+await exporter.export(snapshot);
+
+// Fan-out to multiple backends
+const composite = new CompositeExporter([exporter, otherExporter]);
+
+// Background collection
+const collector = new MetricsCollector(composite, 60000);
+collector.start(fetchFn);
+collector.stop();
+```
+
+## Scheduling
+
+```typescript
+const schedule = await client.schedules.create({
+    agentId: 'my-agent',
+    cron: '0 */6 * * *',
+    parameters: { task: 'cleanup' },
+});
+
+const schedules = await client.schedules.list();
+const health = await client.schedules.getSchedulerHealth();
+```
+
+## What's New in v0.6.0
+
+- **Webhook Verification** — `HmacVerifier`, `JwtVerifier`, provider presets (GitHub, Stripe, Slack)
+- **Markdown Memory** — `MarkdownMemoryStore` for file-based agent context persistence
+- **Agent Skills** — `SkillScanner` with 10 ClawHavoc rules, `SkillLoader` with frontmatter parsing
+- **Metrics** — `MetricsApiClient` sub-client, `FileMetricsExporter`, `CompositeExporter`, `MetricsCollector`
+- **Type Definitions** — Zod schemas for webhooks, skills, and metrics in `@symbiont/types`
+
+## License
+
+MIT License
