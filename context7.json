@@ -1,4 +1,34 @@
 {
+  "$schema": "https://context7.com/schema/context7.json",
   "url": "https://context7.com/thirdkeyai/symbiont-sdk-js",
-  "public_key": "pk_Ehy7QXQTu2Keb0e5BNeyx"
+  "public_key": "pk_Ehy7QXQTu2Keb0e5BNeyx",
+  "projectTitle": "Symbiont SDK for JavaScript/TypeScript",
+  "description": "TypeScript SDK for the Symbiont agent runtime — agent lifecycle, webhook verification, AgentPin identity, memory systems, skill scanning, metrics, scheduling, and MCP protocol integration. Part of the ThirdKey trust stack.",
+  "folders": [
+    "SKILL.md",
+    "README.md",
+    "CHANGELOG.md",
+    "packages/types/src",
+    "packages/core/src"
+  ],
+  "excludeFolders": [
+    "node_modules",
+    "**/node_modules",
+    "**/dist",
+    "**/coverage",
+    "**/__tests__",
+    "**/.turbo"
+  ],
+  "excludeFiles": [],
+  "rules": [
+    "Import from @symbiont/core for client, types, and all standalone modules (webhook verification, skill scanning, markdown memory, metrics export)",
+    "Use SymbiontClient as the main entry point — sub-clients (agents, agentpin, schedules, channels, workflows, metricsClient, system, secrets, mcp, toolReview, http) are lazy-loaded on first access",
+    "Webhook verification: use createProviderVerifier('GITHUB' | 'STRIPE' | 'SLACK' | 'CUSTOM', secret) for known providers; HmacVerifier and JwtVerifier for custom setups",
+    "AgentPin credentials use ES256 (ECDSA P-256) exclusively — never accept other algorithms",
+    "MarkdownMemoryStore, SkillScanner, SkillLoader, FileMetricsExporter, CompositeExporter, MetricsCollector are standalone modules — import directly, not via client sub-clients",
+    "Type definitions with Zod schemas live in @symbiont/types — re-exported from @symbiont/core for convenience",
+    "SkillScanner includes 10 built-in ClawHavoc security rules — always scan untrusted skills before loading",
+    "FileMetricsExporter and MarkdownMemoryStore use atomic file writes (tempfile + rename) for data safety",
+    "Monorepo structure: @symbiont/core (main), @symbiont/types (shared types + Zod), @symbiont/agent (agent/schedule/channel/workflow/agentpin clients)"
+  ]
 }
