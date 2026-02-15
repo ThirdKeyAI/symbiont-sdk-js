@@ -6,10 +6,7 @@
   "description": "TypeScript SDK for the Symbiont agent runtime — agent lifecycle, webhook verification, AgentPin identity, memory systems, skill scanning, metrics, scheduling, and MCP protocol integration. Part of the ThirdKey trust stack.",
   "folders": [
     "SKILL.md",
-    "README.md",
-    "CHANGELOG.md",
-    "packages/types/src",
-    "packages/core/src"
+    "README.md"
   ],
   "excludeFolders": [
     "node_modules",
@@ -17,9 +14,16 @@
     "**/dist",
     "**/coverage",
     "**/__tests__",
-    "**/.turbo"
+    "**/.turbo",
+    "packages",
+    "apps"
   ],
-  "excludeFiles": [],
+  "excludeFiles": [
+    "**/*.ts",
+    "**/*.js",
+    "**/*.json",
+    "CHANGELOG.md"
+  ],
   "rules": [
     "Import from @symbiont/core for client, types, and all standalone modules (webhook verification, skill scanning, markdown memory, metrics export)",
     "Use SymbiontClient as the main entry point — sub-clients (agents, agentpin, schedules, channels, workflows, metricsClient, system, secrets, mcp, toolReview, http) are lazy-loaded on first access",
