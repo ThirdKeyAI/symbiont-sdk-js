@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-02-15
+
+### Added
+
+#### Markdown Memory Persistence
+- **MarkdownMemoryStore** — File-based agent context persistence using markdown format
+  - `saveContext()` / `loadContext()` — Atomic save with daily log files
+  - `deleteContext()` / `listAgentContexts()` — Context lifecycle management
+  - `compact()` — Remove log files older than retention period
+  - `getStorageStats()` — Storage statistics across all agents
+
+#### Webhook Verification
+- **HmacVerifier** — HMAC-SHA256 webhook signature verification with prefix stripping and case-insensitive header lookup
+- **JwtVerifier** — JWT-based webhook verification with HS256, expiration, and optional issuer validation
+- **WebhookProviderPresets** — Pre-configured providers (GITHUB, STRIPE, SLACK, CUSTOM)
+- **createProviderVerifier()** — Factory function for provider verifiers
+- **WebhookVerificationError** — Typed error class with header name context
+
+#### Agent Skills (ClawHavoc Scanning + Loading)
+- **SkillScanner** — Security scanning with 10 built-in ClawHavoc rules and custom rule support
+  - Detects pipe-to-shell, wget-pipe-to-shell, env file references, SOUL.md/memory.md tampering, eval+fetch, base64-decode-exec, rm-rf, chmod-777
+- **SkillLoader** — Skill discovery and loading from configured paths
+  - YAML frontmatter parsing for skill metadata
+  - Signature status detection (SchemaPin .sig files)
+  - Configurable scan-on-load behavior
+
+#### Metrics Collection & Export
+- **MetricsApiClient** — Sub-client for runtime metrics API (`GET /metrics/snapshot`, `GET /metrics/scheduler`, `GET /metrics/system`, `POST /metrics/export`)
+- **FileMetricsExporter** — Atomic JSON file export with compact mode
+- **CompositeExporter** — Fan-out to multiple export backends with partial failure tolerance
+- **MetricsCollector** — Background interval-based periodic metrics export
+- **MetricsExportError** — Typed error class with backend context
+
+#### New Type Definitions (`@symbiont/types`)
+- `packages/types/src/webhook.ts` — `WebhookProviderType`, `WebhookVerificationConfig`, `WebhookProviderPreset` with Zod schemas
+- `packages/types/src/skills.ts` — `SignatureStatusType`, `ScanSeverityType`, `ScanFinding`, `ScanResult`, `SkillMetadata`, `LoadedSkill`, `ScanRule`, `SkillLoaderConfig`, `SkillsConfig` with Zod schemas
+- `packages/types/src/metrics.ts` — `OtlpProtocol`, `OtlpConfig`, `FileMetricsConfig`, `MetricsConfig`, `SchedulerMetricsSnapshot`, `TaskManagerMetricsSnapshot`, `LoadBalancerMetricsSnapshot`, `SystemResourceMetricsSnapshot`, `MetricsSnapshot` with Zod schemas
+
+### Changed
+- Aligned with Symbiont Runtime v1.4.0
+- `SymbiontClient.metricsClient` property — Lazy-loaded `MetricsApiClient` sub-client
+- All new types and utilities exported from `@symbiont/core`
+
+---
+
 ## [0.5.0] - 2026-02-11
 
 ### Added

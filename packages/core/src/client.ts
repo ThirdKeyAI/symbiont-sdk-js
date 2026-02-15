@@ -23,6 +23,7 @@ export class SymbiontClient {
   private _mcp?: any; // McpClient
   private _http?: any; // HttpEndpointManager
   private _agentpin?: any; // AgentPinClient
+  private _metricsClient?: any; // MetricsApiClient
 
   /**
    * Create a new Symbiont SDK client
@@ -292,6 +293,17 @@ export class SymbiontClient {
       this._agentpin = new AgentPinClient(this);
     }
     return this._agentpin;
+  }
+
+  /**
+   * Lazy-loaded metrics API client
+   */
+  get metricsClient(): any {
+    if (!this._metricsClient) {
+      const { MetricsApiClient } = require('./MetricsClient');
+      this._metricsClient = new MetricsApiClient(this);
+    }
+    return this._metricsClient;
   }
 
   /**

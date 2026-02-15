@@ -44,6 +44,15 @@ export * from './system';
 // AgentPin types
 export * from './agentpin';
 
+// Webhook types
+export * from './webhook';
+
+// Skills types
+export * from './skills';
+
+// Metrics types
+export * from './metrics';
+
 // Common utility types
 export interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
