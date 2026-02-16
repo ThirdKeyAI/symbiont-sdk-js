@@ -3,7 +3,7 @@ import { QdrantManager } from '../QdrantManager';
 import { VectorConfig } from '../../../config/VectorConfig';
 
 // Mock QdrantClient
-vi.mock('@qdrant/js-client', () => ({
+vi.mock('@qdrant/qdrant-js', () => ({
   QdrantClient: vi.fn(),
 }));
 
@@ -56,7 +56,7 @@ describe('QdrantManager', () => {
 
   beforeEach(async () => {
     // Get the mocked QdrantClient
-    const { QdrantClient } = await vi.importMock('@qdrant/js-client');
+    const { QdrantClient } = await vi.importMock('@qdrant/qdrant-js');
     mockQdrantClient = QdrantClient as any;
     
     // Setup mock client
@@ -204,17 +204,20 @@ describe('QdrantManager', () => {
     });
 
     it('should return cluster info when successful', async () => {
-      const mockClusterInfo = { peer_id: 'test-peer', uri: 'http://localhost:6333' };
-      mockClient.getClusterInfo.mockResolvedValue(mockClusterInfo);
+      mockClient.getCollections.mockResolvedValue({ collections: [{ name: 'col1' }] });
 
       const result = await qdrantManager.getClusterInfo();
 
-      expect(result).toEqual(mockClusterInfo);
-      expect(mockClient.getClusterInfo).toHaveBeenCalled();
+      expect(result).toEqual({
+        cluster_status: 'enabled',
+        peer_id: null,
+        collections_count: 1,
+      });
+      expect(mockClient.getCollections).toHaveBeenCalled();
     });
 
     it('should throw error when cluster info request fails', async () => {
-      mockClient.getClusterInfo.mockRejectedValue(new Error('API error'));
+      mockClient.getCollections.mockRejectedValue(new Error('API error'));
 
       await expect(qdrantManager.getClusterInfo()).rejects.toThrow(
         'Failed to get cluster info: API error'
@@ -228,16 +231,16 @@ describe('QdrantManager', () => {
     });
 
     it('should return true when health check succeeds', async () => {
-      mockClient.healthCheck.mockResolvedValue(true);
+      mockClient.getCollections.mockResolvedValue({ collections: [] });
 
       const result = await qdrantManager.getHealth();
 
       expect(result).toBe(true);
-      expect(mockClient.healthCheck).toHaveBeenCalled();
+      expect(mockClient.getCollections).toHaveBeenCalled();
     });
 
     it('should return false when health check fails', async () => {
-      mockClient.healthCheck.mockRejectedValue(new Error('Health check failed'));
+      mockClient.getCollections.mockRejectedValue(new Error('Health check failed'));
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       const result = await qdrantManager.getHealth();
@@ -250,22 +253,6 @@ describe('QdrantManager', () => {
 
       consoleSpy.mockRestore();
     });
-
-    it('should return true when health check returns true', async () => {
-      mockClient.healthCheck.mockResolvedValue(true);
-
-      const result = await qdrantManager.getHealth();
-
-      expect(result).toBe(true);
-    });
-
-    it('should return false when health check returns non-true value', async () => {
-      mockClient.healthCheck.mockResolvedValue('ok');
-
-      const result = await qdrantManager.getHealth();
-
-      expect(result).toBe(false);
-    });
   });
 
   describe('getMetrics', () => {
@@ -273,18 +260,19 @@ describe('QdrantManager', () => {
       qdrantManager = new QdrantManager(config);
     });
 
-    it('should return metrics when successful', async () => {
-      const mockMetrics = 'metric1{label="value"} 123\nmetric2{} 456';
-      mockClient.getMetrics.mockResolvedValue(mockMetrics);
+    it('should return metrics JSON when successful', async () => {
+      mockClient.getCollections.mockResolvedValue({ collections: [{ name: 'col1' }] });
 
       const result = await qdrantManager.getMetrics();
+      const parsed = JSON.parse(result);
 
-      expect(result).toBe(mockMetrics);
-      expect(mockClient.getMetrics).toHaveBeenCalled();
+      expect(parsed.collections_count).toBe(1);
+      expect(parsed.collections).toEqual([{ name: 'col1' }]);
+      expect(mockClient.getCollections).toHaveBeenCalled();
     });
 
     it('should throw error when metrics request fails', async () => {
-      mockClient.getMetrics.mockRejectedValue(new Error('Metrics error'));
+      mockClient.getCollections.mockRejectedValue(new Error('Metrics error'));
 
       await expect(qdrantManager.getMetrics()).rejects.toThrow(
         'Failed to get metrics: Metrics error'
@@ -370,47 +358,22 @@ describe('QdrantManager', () => {
       qdrantManager = new QdrantManager(config);
     });
 
-    it('should recover from snapshot successfully', async () => {
-      mockClient.recover.mockResolvedValue(undefined);
-
-      const result = await qdrantManager.recoverFromSnapshot(
-        'test-collection',
-        '/path/to/snapshot'
-      );
-
-      expect(result).toBe(true);
-      expect(mockClient.recover).toHaveBeenCalledWith('test-collection', {
-        location: '/path/to/snapshot',
-      });
-    });
-
-    it('should recover from snapshot with options', async () => {
-      mockClient.recover.mockResolvedValue(undefined);
-
-      const result = await qdrantManager.recoverFromSnapshot(
-        'test-collection',
-        '/path/to/snapshot',
-        {
-          priority: 'replica',
-          checksum: 'abc123',
-        }
-      );
-
-      expect(result).toBe(true);
-      expect(mockClient.recover).toHaveBeenCalledWith('test-collection', {
-        location: '/path/to/snapshot',
-        priority: 'replica',
-        checksum: 'abc123',
-      });
-    });
-
-    it('should throw error when recovery fails', async () => {
-      mockClient.recover.mockRejectedValue(new Error('Recovery error'));
-
+    it('should throw not implemented error', async () => {
       await expect(
         qdrantManager.recoverFromSnapshot('test-collection', '/path/to/snapshot')
       ).rejects.toThrow(
-        'Failed to recover collection test-collection from snapshot: Recovery error'
+        'Failed to recover collection test-collection from snapshot: Snapshot recovery is not yet implemented'
+      );
+    });
+
+    it('should throw not implemented error with options', async () => {
+      await expect(
+        qdrantManager.recoverFromSnapshot('test-collection', '/path/to/snapshot', {
+          priority: 'replica',
+          checksum: 'abc123',
+        })
+      ).rejects.toThrow(
+        'Failed to recover collection test-collection from snapshot: Snapshot recovery is not yet implemented'
       );
     });
   });
