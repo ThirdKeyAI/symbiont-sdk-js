@@ -1,6 +1,8 @@
 ---
 name: symbiont-sdk-js
+title: Symbiont SDK for JavaScript/TypeScript
 description: TypeScript SDK for the Symbiont agent runtime — agent lifecycle, webhook verification, AgentPin identity, memory systems, skill scanning, metrics, scheduling, and MCP integration
+version: 0.6.0
 ---
 
 # Symbiont SDK for JavaScript/TypeScript — Skills Guide
