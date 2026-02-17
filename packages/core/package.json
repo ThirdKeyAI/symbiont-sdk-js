@@ -1,5 +1,5 @@
 {
-  "name": "@symbiont/core",
+  "name": "@symbi/core",
   "version": "1.0.0",
   "description": "Core Symbiont SDK functionality and SymbiontClient",
   "main": "dist/index.js",
@@ -18,8 +18,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@symbiont/agent": "^1.0.0",
-    "@symbiont/types": "^1.0.0",
+    "@symbi/agent": "^1.0.0",
+    "@symbi/types": "^1.0.0",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.10",
     "axios": "^1.5.0",

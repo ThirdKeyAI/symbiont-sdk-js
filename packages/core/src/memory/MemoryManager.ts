@@ -12,7 +12,7 @@ import {
   MemoryManager as IMemoryManager,
   MemoryStore as IMemoryStore,
   MemoryStoreConfig
-} from '@symbiont/types';
+} from '@symbi/types';
 import { HierarchicalMemory } from './HierarchicalMemory';
 import { InMemoryStore } from './InMemoryStore';
 

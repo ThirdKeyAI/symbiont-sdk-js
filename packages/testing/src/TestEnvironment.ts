@@ -1,4 +1,4 @@
-import { SymbiontConfig } from '@symbiont/types';
+import { SymbiontConfig } from '@symbi/types';
 import { MockFetch } from './mocks/MockFetch';
 import { MockAuthManager } from './mocks/MockAuthManager';
 import { MockSecretManager } from './mocks/MockSecretManager';
@@ -65,7 +65,7 @@ export class TestEnvironment {
    * Get a configured SymbiontClient for testing
    */
   getClient(): any {
-    const { SymbiontClient } = require('@symbiont/core');
+    const { SymbiontClient } = require('@symbi/core');
     
     const defaultConfig: SymbiontConfig = {
       apiKey: 'test-api-key',

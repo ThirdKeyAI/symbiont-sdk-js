@@ -1,5 +1,5 @@
 {
-  "name": "@symbiont/cli",
+  "name": "@symbi/cli",
   "version": "1.0.0",
   "description": "Command-line interface for Symbiont SDK",
   "main": "dist/index.js",
@@ -18,12 +18,12 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@symbiont/agent": "^1.0.0",
-    "@symbiont/core": "^1.0.0",
-    "@symbiont/policy": "^1.0.0",
-    "@symbiont/secrets": "^1.0.0",
-    "@symbiont/tool-review": "^1.0.0",
-    "@symbiont/types": "^1.0.0",
+    "@symbi/agent": "^1.0.0",
+    "@symbi/core": "^1.0.0",
+    "@symbi/policy": "^1.0.0",
+    "@symbi/secrets": "^1.0.0",
+    "@symbi/tool-review": "^1.0.0",
+    "@symbi/types": "^1.0.0",
     "chalk": "^4.1.2",
     "commander": "^11.0.0",
     "inquirer": "^12.9.2"

@@ -8,7 +8,7 @@ import type {
   WorkflowListResponse,
   McpConnectionStatus,
   HealthStatus,
-} from '@symbiont/types';
+} from '@symbi/types';
 
 describe('McpClient Integration Tests', () => {
   let testEnv: TestEnvironment;

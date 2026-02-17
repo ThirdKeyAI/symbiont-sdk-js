@@ -12,7 +12,7 @@ import {
   StatsResponse,
   RequestOptions,
   SymbiontConfig,
-} from '@symbiont/types';
+} from '@symbi/types';
 
 /**
  * Simple interface to avoid circular dependency with SymbiontClient

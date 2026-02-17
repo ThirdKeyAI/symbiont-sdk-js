@@ -37,7 +37,7 @@ The Tool Review API provides a comprehensive security review process for AI tool
 ### Basic Tool Submission
 
 ```typescript
-import { SymbiontClient } from '@symbiont/core';
+import { SymbiontClient } from '@symbi/core';
 
 const client = new SymbiontClient({
   apiKey: process.env.SYMBIONT_API_KEY,

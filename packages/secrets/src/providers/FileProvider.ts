@@ -5,7 +5,7 @@ import {
   SecretResolutionResult,
   FileProviderConfig,
   SecretProviderError
-} from '@symbiont/types';
+} from '@symbi/types';
 
 /**
  * Provider that resolves secrets from files (JSON or .env format)

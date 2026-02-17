@@ -37,7 +37,7 @@ The [`PolicyBuilder`](../api/classes/PolicyBuilder.html) provides a fluent API f
 ### Simple Policy
 
 ```typescript
-import { PolicyBuilder } from '@symbiont/policy';
+import { PolicyBuilder } from '@symbi/policy';
 
 // Create a simple access control policy
 const policy = new PolicyBuilder('dataAccessPolicy')
@@ -65,7 +65,7 @@ console.log('Rules:', policy.rules.length);
 ### Using the Client's PolicyBuilder
 
 ```typescript
-import { SymbiontClient } from '@symbiont/core';
+import { SymbiontClient } from '@symbi/core';
 
 const client = new SymbiontClient({
   apiKey: process.env.SYMBIONT_API_KEY

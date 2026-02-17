@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { MemoryManager } from '../MemoryManager';
 import { InMemoryStore } from '../InMemoryStore';
 import { HierarchicalMemory } from '../HierarchicalMemory';
-import { MemoryLevel, MemoryNode, MemorySearchQuery } from '@symbiont/types';
+import { MemoryLevel, MemoryNode, MemorySearchQuery } from '@symbi/types';
 
 // Mock HierarchicalMemory for controlled testing
 vi.mock('../HierarchicalMemory');

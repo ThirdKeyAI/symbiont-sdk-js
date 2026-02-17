@@ -12,7 +12,7 @@ import type {
   AgentPinTrustBundle,
   AgentPinVerifierConfig,
   AgentPinCredentialRequest,
-} from '@symbiont/types';
+} from '@symbi/types';
 
 // Re-export types for convenience
 export type {

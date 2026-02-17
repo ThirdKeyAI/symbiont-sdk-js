@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { RBACManager } from '../RBACManager';
-import { Role, Permission, AuthUser } from '@symbiont/types';
+import { Role, Permission, AuthUser } from '@symbi/types';
 
 describe('RBACManager', () => {
   let rbacManager: RBACManager;

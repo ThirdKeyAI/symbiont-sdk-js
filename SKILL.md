@@ -13,7 +13,7 @@ version: 0.6.0
 
 ## What This SDK Does
 
-The Symbiont JS/TS SDK (`@symbiont/core`) provides a client for interacting with the Symbiont agent runtime. It covers agent lifecycle management, policy enforcement, secrets management, MCP protocol integration, memory systems, AgentPin credential verification, webhook signature verification, agent skill scanning, and metrics collection/export.
+The Symbiont JS/TS SDK (`@symbi/core`) provides a client for interacting with the Symbiont agent runtime. It covers agent lifecycle management, policy enforcement, secrets management, MCP protocol integration, memory systems, AgentPin credential verification, webhook signature verification, agent skill scanning, and metrics collection/export.
 
 **Part of the ThirdKey trust stack**: SchemaPin (tool integrity) → AgentPin (agent identity) → Symbiont (runtime)
 
@@ -22,11 +22,11 @@ The Symbiont JS/TS SDK (`@symbiont/core`) provides a client for interacting with
 ## Quick Start
 
 ```bash
-npm install @symbiont/core
+npm install @symbi/core
 ```
 
 ```typescript
-import { SymbiontClient } from '@symbiont/core';
+import { SymbiontClient } from '@symbi/core';
 
 const client = new SymbiontClient({
     apiKey: process.env.SYMBIONT_API_KEY,
@@ -101,7 +101,7 @@ Verify inbound webhook signatures from GitHub, Stripe, Slack, or custom provider
 ```typescript
 import {
     HmacVerifier, JwtVerifier, createProviderVerifier, WebhookProviderPresets,
-} from '@symbiont/core';
+} from '@symbi/core';
 
 // Use a provider preset (GitHub, Stripe, Slack, Custom)
 const verifier = createProviderVerifier('GITHUB', Buffer.from(secret));
@@ -125,7 +125,7 @@ jwt.verify(headers, body);
 File-based agent context persistence using markdown format:
 
 ```typescript
-import { MarkdownMemoryStore } from '@symbiont/core';
+import { MarkdownMemoryStore } from '@symbi/core';
 
 const store = new MarkdownMemoryStore('/data/memory', 30); // 30-day retention
 
@@ -156,7 +156,7 @@ const stats = await store.getStorageStats();
 Scan and load agent skill definitions with security scanning:
 
 ```typescript
-import { SkillScanner, SkillLoader } from '@symbiont/core';
+import { SkillScanner, SkillLoader } from '@symbi/core';
 
 // Scan content for security issues (10 built-in ClawHavoc rules)
 const scanner = new SkillScanner();
@@ -187,7 +187,7 @@ Runtime metrics retrieval and local export:
 ```typescript
 import {
     MetricsApiClient, FileMetricsExporter, CompositeExporter, MetricsCollector,
-} from '@symbiont/core';
+} from '@symbi/core';
 
 // Fetch metrics from runtime API (via client)
 const snapshot = await client.metricsClient.getSnapshot();
@@ -214,7 +214,7 @@ collector.stop();
 Hierarchical memory with short-term, long-term, episodic, and semantic levels:
 
 ```typescript
-import { MemoryManager, InMemoryStore, HierarchicalMemory } from '@symbiont/core';
+import { MemoryManager, InMemoryStore, HierarchicalMemory } from '@symbi/core';
 
 const memory = new HierarchicalMemory();
 await memory.store({ content: 'data', level: 'short-term' });
@@ -237,7 +237,7 @@ const health = await client.schedules.getSchedulerHealth();
 ### Policy Management (`client.policies`)
 
 ```typescript
-import { PolicyBuilder } from '@symbiont/core';
+import { PolicyBuilder } from '@symbi/core';
 
 const policy = new PolicyBuilder()
     .allow(['read_data', 'write_output'])
@@ -279,13 +279,13 @@ Manage HTTP input endpoints for agent invocation.
 
 | Package | Purpose |
 |---------|---------|
-| `@symbiont/core` | Main client, configuration, types, webhook verification, skills, metrics, memory |
-| `@symbiont/agent` | Agent management, schedules, channels, workflows, AgentPin |
-| `@symbiont/types` | Shared TypeScript interfaces and Zod schemas |
-| `@symbiont/policy` | Policy builder and enforcement |
-| `@symbiont/secrets` | Secrets management providers |
-| `@symbiont/mcp` | MCP protocol client |
-| `@symbiont/tool-review` | Tool review workflow |
+| `@symbi/core` | Main client, configuration, types, webhook verification, skills, metrics, memory |
+| `@symbi/agent` | Agent management, schedules, channels, workflows, AgentPin |
+| `@symbi/types` | Shared TypeScript interfaces and Zod schemas |
+| `@symbi/policy` | Policy builder and enforcement |
+| `@symbi/secrets` | Secrets management providers |
+| `@symbi/mcp` | MCP protocol client |
+| `@symbi/tool-review` | Tool review workflow |
 
 ---
 

@@ -141,7 +141,7 @@ async function createProjectStructure(projectDir: string, projectInfo: any): Pro
       watch: 'symbiont dev watch'
     },
     dependencies: {
-      '@symbiont/cli': '^1.0.0'
+      '@symbi/cli': '^1.0.0'
     }
   };
   

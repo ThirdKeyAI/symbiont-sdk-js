@@ -7,8 +7,8 @@ const external = [
   // Node.js built-ins
   'fs', 'path', 'os', 'util', 'events', 'stream', 'crypto',
   // Dependencies that should remain external
-  '@symbiont/core', '@symbiont/agent', '@symbiont/policy', 
-  '@symbiont/secrets', '@symbiont/tool-review', '@symbiont/types',
+  '@symbi/core', '@symbi/agent', '@symbi/policy', 
+  '@symbi/secrets', '@symbi/tool-review', '@symbi/types',
   'commander', 'inquirer', 'chalk'
 ];
 

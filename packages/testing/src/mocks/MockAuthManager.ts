@@ -1,4 +1,4 @@
-import { SymbiontConfig } from '@symbiont/types';
+import { SymbiontConfig } from '@symbi/types';
 
 /**
  * Mock authentication manager for testing

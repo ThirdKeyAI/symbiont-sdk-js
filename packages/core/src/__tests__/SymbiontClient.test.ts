@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { SymbiontClient } from '../client';
-import { SymbiontConfig } from '@symbiont/types';
+import { SymbiontConfig } from '@symbi/types';
 import { TestEnvironment } from '../../../testing/src/TestEnvironment';
 
 describe('SymbiontClient', () => {
@@ -120,7 +120,7 @@ describe('SymbiontClient', () => {
     it('should create agents client on first access', () => {
       // Mock the require call
       const mockAgentClient = { test: 'agent' };
-      vi.doMock('@symbiont/agent', () => ({
+      vi.doMock('@symbi/agent', () => ({
         AgentClient: vi.fn(() => mockAgentClient)
       }));
 
@@ -140,7 +140,7 @@ describe('SymbiontClient', () => {
     it('should create tool review client on first access', () => {
       // Mock the require call
       const mockToolReviewClient = { test: 'tool-review' };
-      vi.doMock('@symbiont/tool-review', () => ({
+      vi.doMock('@symbi/tool-review', () => ({
         ToolReviewClient: vi.fn(() => mockToolReviewClient)
       }));
 
@@ -150,7 +150,7 @@ describe('SymbiontClient', () => {
     it('should create MCP client on first access', () => {
       // Mock the require call
       const mockMcpClient = { test: 'mcp' };
-      vi.doMock('@symbiont/mcp', () => ({
+      vi.doMock('@symbi/mcp', () => ({
         McpClient: vi.fn(() => mockMcpClient)
       }));
 
@@ -160,7 +160,7 @@ describe('SymbiontClient', () => {
     it('should create policy builder on access', () => {
       // Mock the require call
       const mockPolicyBuilder = { test: 'policy-builder' };
-      vi.doMock('@symbiont/policy', () => ({
+      vi.doMock('@symbi/policy', () => ({
         PolicyBuilder: vi.fn(() => mockPolicyBuilder)
       }));
 

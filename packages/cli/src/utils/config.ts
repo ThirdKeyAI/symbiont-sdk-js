@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import { SymbiontConfig } from '@symbiont/types';
+import { SymbiontConfig } from '@symbi/types';
 import { ConfigurationError, logVerbose } from './error-handler';
 
 export interface CliConfig extends SymbiontConfig {

@@ -1,5 +1,5 @@
 import { JWTHandler } from './JWTHandler';
-import { TokenValidationResult, BlacklistEntry } from '@symbiont/types';
+import { TokenValidationResult, BlacklistEntry } from '@symbi/types';
 import { CryptoUtils } from '../security/CryptoUtils';
 
 /**

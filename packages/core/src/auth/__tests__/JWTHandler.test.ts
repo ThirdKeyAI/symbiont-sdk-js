@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { JWTHandler } from '../JWTHandler';
-import { JWTPayload } from '@symbiont/types';
+import { JWTPayload } from '@symbi/types';
 
 describe('JWTHandler', () => {
   let jwtHandler: JWTHandler;

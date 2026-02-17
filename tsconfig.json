@@ -10,7 +10,7 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@symbiont/*": ["packages/*/src"]
+      "@symbi/*": ["packages/*/src"]
     },
     "skipLibCheck": true,
     "esModuleInterop": true,

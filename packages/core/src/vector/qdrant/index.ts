@@ -1,5 +1,5 @@
 /**
- * @symbiont/core - Qdrant Vector Database Integration
+ * @symbi/core - Qdrant Vector Database Integration
  */
 
 export { QdrantManager } from './QdrantManager';

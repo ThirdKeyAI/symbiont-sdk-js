@@ -7,7 +7,7 @@ import {
   Role,
   Permission,
   JWTPayload 
-} from '@symbiont/types';
+} from '@symbi/types';
 import { JWTHandler } from './JWTHandler';
 import { TokenValidator } from './TokenValidator';
 

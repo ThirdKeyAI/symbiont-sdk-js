@@ -1,5 +1,5 @@
 /**
- * @symbiont/secrets - Secret management utilities for Symbiont SDK
+ * @symbi/secrets - Secret management utilities for Symbiont SDK
  */
 
 export { SecretManager } from './SecretManager';
@@ -7,7 +7,7 @@ export { EnvironmentVariableProvider } from './providers/EnvironmentVariableProv
 export { FileProvider } from './providers/FileProvider';
 export { VaultProvider } from './providers/VaultProvider';
 
-// Re-export types from @symbiont/types for convenience
+// Re-export types from @symbi/types for convenience
 export type {
   SecretProvider,
   SecretResolutionResult,
@@ -22,4 +22,4 @@ export type {
   SecretNotFoundError,
   SecretProviderError,
   SecretTimeoutError
-} from '@symbiont/types';
+} from '@symbi/types';

@@ -1,5 +1,5 @@
 /**
- * @symbiont/types - Shared TypeScript interfaces and Zod schemas for Symbiont SDK
+ * @symbi/types - Shared TypeScript interfaces and Zod schemas for Symbiont SDK
  */
 
 // Configuration types

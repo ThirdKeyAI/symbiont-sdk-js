@@ -9,7 +9,7 @@ import {
   PolicyValidationResult,
   PolicyValidationError,
   EnhancedPolicyDefinition
-} from '@symbiont/types';
+} from '@symbi/types';
 
 /**
  * Generate a simple unique ID

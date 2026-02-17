@@ -28,7 +28,7 @@ The [`AgentClient`](../api/classes/AgentClient.html) provides a comprehensive AP
 ### Basic Agent Creation
 
 ```typescript
-import { SymbiontClient } from '@symbiont/core';
+import { SymbiontClient } from '@symbi/core';
 
 const client = new SymbiontClient({
   apiKey: process.env.SYMBIONT_API_KEY

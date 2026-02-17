@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { HierarchicalMemory } from '../HierarchicalMemory';
 import { InMemoryStore } from '../InMemoryStore';
-import { MemoryLevel } from '@symbiont/types';
+import { MemoryLevel } from '@symbi/types';
 
 describe('HierarchicalMemory', () => {
   let hierarchicalMemory: HierarchicalMemory;

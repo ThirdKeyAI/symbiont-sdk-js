@@ -1,5 +1,5 @@
 /**
- * @symbiont/agent - Agent management and execution for the Symbiont SDK
+ * @symbi/agent - Agent management and execution for the Symbiont SDK
  */
 
 // Export the main AgentClient
@@ -49,9 +49,9 @@ export type {
 
 // Export the WorkflowClient
 export { WorkflowClient } from './WorkflowClient';
-export type { WorkflowExecutionRequest } from '@symbiont/types';
+export type { WorkflowExecutionRequest } from '@symbi/types';
 
-// Re-export agent-related types from @symbiont/types for convenience
+// Re-export agent-related types from @symbi/types for convenience
 export type {
   Agent,
   AgentCreatePayload,
@@ -69,4 +69,4 @@ export type {
   PolicyDefinition,
   ExecutionConfig,
   AgentHistoryItem,
-} from '@symbiont/types';
+} from '@symbi/types';

@@ -16,7 +16,7 @@ import {
   ChannelHealthResponse,
   IdentityMappingEntry,
   ChannelAuditResponse,
-} from '@symbiont/types';
+} from '@symbi/types';
 
 /**
  * Mock data for API responses and testing

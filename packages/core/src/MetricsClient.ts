@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import type { MetricsSnapshot as MetricsSnapshotType } from '@symbiont/types';
+import type { MetricsSnapshot as MetricsSnapshotType } from '@symbi/types';
 import {
   RequestOptions,
   SymbiontConfig,
-} from '@symbiont/types';
+} from '@symbi/types';
 
 // Re-export the type
 export type { MetricsSnapshotType };

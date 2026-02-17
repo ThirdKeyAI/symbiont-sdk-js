@@ -10,7 +10,7 @@ import {
   MemorySearchResult,
   MemoryStats,
   MemoryStore as IMemoryStore
-} from '@symbiont/types';
+} from '@symbi/types';
 
 /**
  * Memory level configuration

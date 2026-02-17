@@ -16,7 +16,7 @@ import type {
   RegisterChannelRequest,
   UpdateChannelRequest,
   AddIdentityMappingRequest,
-} from '@symbiont/types';
+} from '@symbi/types';
 
 describe('ChannelClient Integration Tests', () => {
   let testEnv: TestEnvironment;

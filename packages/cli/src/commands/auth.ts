@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { dirname } from 'path';
 import inquirer from 'inquirer';
-import { SymbiontClient } from '@symbiont/core';
+import { SymbiontClient } from '@symbi/core';
 import { getConfig, setConfig, getCredentialsPath } from '../utils/config';
 import { AuthenticationError, logSuccess, logInfo, logVerbose } from '../utils/error-handler';
 import { formatKeyValue } from '../utils/output';

@@ -26,14 +26,14 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@symbiont/types': resolve(__dirname, 'packages/types/src'),
-      '@symbiont/core': resolve(__dirname, 'packages/core/src'),
-      '@symbiont/agent': resolve(__dirname, 'packages/agent/src'),
-      '@symbiont/secrets': resolve(__dirname, 'packages/secrets/src'),
-      '@symbiont/testing': resolve(__dirname, 'packages/testing/src'),
-      '@symbiont/tool-review': resolve(__dirname, 'packages/tool-review/src'),
-      '@symbiont/mcp': resolve(__dirname, 'packages/mcp/src'),
-      '@symbiont/policy': resolve(__dirname, 'packages/policy/src')
+      '@symbi/types': resolve(__dirname, 'packages/types/src'),
+      '@symbi/core': resolve(__dirname, 'packages/core/src'),
+      '@symbi/agent': resolve(__dirname, 'packages/agent/src'),
+      '@symbi/secrets': resolve(__dirname, 'packages/secrets/src'),
+      '@symbi/testing': resolve(__dirname, 'packages/testing/src'),
+      '@symbi/tool-review': resolve(__dirname, 'packages/tool-review/src'),
+      '@symbi/mcp': resolve(__dirname, 'packages/mcp/src'),
+      '@symbi/policy': resolve(__dirname, 'packages/policy/src')
     }
   }
 });

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { AuthenticationManager, MemoryTokenCache } from '../auth';
-import { SymbiontConfig } from '@symbiont/types';
+import { SymbiontConfig } from '@symbi/types';
 import { MockSecretManager } from '../../../testing/src/mocks/MockSecretManager';
 
 describe('AuthenticationManager', () => {

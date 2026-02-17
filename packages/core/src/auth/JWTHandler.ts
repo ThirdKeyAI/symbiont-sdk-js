@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { AuthToken, JWTPayload, TokenValidationResult } from '@symbiont/types';
+import { AuthToken, JWTPayload, TokenValidationResult } from '@symbi/types';
 
 /**
  * JWT Handler for encoding/decoding JWTs with refresh capabilities

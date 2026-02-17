@@ -14,7 +14,7 @@ import type {
   DecisionSubmissionResponse,
   SigningStatus,
   StatsResponse,
-} from '@symbiont/types';
+} from '@symbi/types';
 
 describe('ToolReviewClient Integration Tests', () => {
   let testEnv: TestEnvironment;

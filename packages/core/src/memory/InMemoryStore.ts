@@ -9,7 +9,7 @@ import {
   MemorySearchResult, 
   MemoryStats,
   MemoryStoreConfig
-} from '@symbiont/types';
+} from '@symbi/types';
 import { MemoryStore } from './MemoryStore';
 
 /**

@@ -20,7 +20,7 @@ export default [
       }
     ],
     external: [
-      '@symbiont/types',
+      '@symbi/types',
       '@qdrant/qdrant-js',
       'express',
       'jsonwebtoken',

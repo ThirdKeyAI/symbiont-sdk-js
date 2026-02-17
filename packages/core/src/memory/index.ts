@@ -8,7 +8,7 @@ export { InMemoryStore } from './InMemoryStore';
 export { HierarchicalMemory } from './HierarchicalMemory';
 export { MemoryManager, type MemoryManagerConfig } from './MemoryManager';
 
-// Re-export types from @symbiont/types for convenience
+// Re-export types from @symbi/types for convenience
 export {
   MemoryLevel,
   MemoryNode,
@@ -19,4 +19,4 @@ export {
   MemoryStore as IMemoryStore,
   MemoryManager as IMemoryManager,
   MemoryEvents
-} from '@symbiont/types';
+} from '@symbi/types';

@@ -681,8 +681,8 @@ sequenceDiagram
 ### Development Workflow
 
 1. **Package Development Order**:
-   - Start with `@symbiont/types` for shared interfaces
-   - Build `@symbiont/core` with basic client functionality
+   - Start with `@symbi/types` for shared interfaces
+   - Build `@symbi/core` with basic client functionality
    - Implement specialized clients (`agent`, `tool-review`, etc.)
    - Add advanced features (`mcp`, `secrets`, etc.)
    - Complete with `cli` and `testing` packages

@@ -6,27 +6,27 @@ This document provides practical guidance for implementing the Symbiont JavaScri
 
 ### Phase 1: Foundation (Weeks 1-3)
 - Set up monorepo with Lerna/Nx
-- Create `@symbiont/types` package with core interfaces
-- Implement basic `@symbiont/core` package
+- Create `@symbi/types` package with core interfaces
+- Implement basic `@symbi/core` package
 - Set up build pipeline and CI/CD
 
 ### Phase 2: Core Functionality (Weeks 4-6)
 - Complete `SymbiontClient` with dual API support
 - Implement authentication management
 - Add validation layer with configurable modes
-- Create `@symbiont/agent` package
+- Create `@symbi/agent` package
 
 ### Phase 3: Specialized Clients (Weeks 7-9)
-- Implement `@symbiont/tool-review` package
-- Create `@symbiont/policy` package
+- Implement `@symbi/tool-review` package
+- Create `@symbi/policy` package
 - Add comprehensive error handling
 - Implement caching and middleware
 
 ### Phase 4: Advanced Features (Weeks 10-12)
-- Complete `@symbiont/secrets` package
-- Implement `@symbiont/mcp` package
+- Complete `@symbi/secrets` package
+- Implement `@symbi/mcp` package
 - Add browser and worker support
-- Create `@symbiont/cli` package
+- Create `@symbi/cli` package
 
 ### Phase 5: Testing & Documentation (Weeks 13-14)
 - Complete test coverage
@@ -82,7 +82,7 @@ npm install axios ws zod
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@symbiont/*": ["packages/*/src"]
+      "@symbi/*": ["packages/*/src"]
     }
   },
   "references": [
@@ -313,7 +313,7 @@ describe('SymbiontClient', () => {
 ```typescript
 // packages/core/tests/integration/api.test.ts
 import { SymbiontClient } from '../src';
-import { TestEnvironment } from '@symbiont/testing';
+import { TestEnvironment } from '@symbi/testing';
 
 describe('API Integration', () => {
   let env: TestEnvironment;

@@ -3,8 +3,8 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { SkillScanner, SkillLoader } from '../SkillScanner';
-import type { ScanRule } from '@symbiont/types';
-import { ScanSeverityType, SignatureStatusType } from '@symbiont/types';
+import type { ScanRule } from '@symbi/types';
+import { ScanSeverityType, SignatureStatusType } from '@symbi/types';
 
 describe('SkillScanner', () => {
   let scanner: SkillScanner;

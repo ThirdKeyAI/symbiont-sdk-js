@@ -38,7 +38,7 @@ The [`SecretManager`](../api/classes/secrets_src.SecretManager.html) provides a 
 ### Quick Start
 
 ```typescript
-import { SecretManager } from '@symbiont/secrets';
+import { SecretManager } from '@symbi/secrets';
 
 // Basic configuration with environment variables
 const secretManager = new SecretManager({
@@ -68,7 +68,7 @@ console.log('API Key retrieved');
 The SymbiontClient automatically uses a SecretManager internally:
 
 ```typescript
-import { SymbiontClient } from '@symbiont/core';
+import { SymbiontClient } from '@symbi/core';
 
 const client = new SymbiontClient({
   apiKey: process.env.SYMBIONT_API_KEY, // Direct value
@@ -88,7 +88,7 @@ await client.connect();
 Reads secrets from environment variables with optional prefix support.
 
 ```typescript
-import { SecretManager, EnvironmentVariableProvider } from '@symbiont/secrets';
+import { SecretManager, EnvironmentVariableProvider } from '@symbi/secrets';
 
 const secretManager = new SecretManager({
   providers: [
@@ -262,7 +262,7 @@ import {
   SecretNotFoundError, 
   SecretTimeoutError, 
   SecretProviderError 
-} from '@symbiont/secrets';
+} from '@symbi/secrets';
 
 try {
   const secret = await secretManager.getSecret('CRITICAL_SECRET', {
@@ -360,7 +360,7 @@ const vaultProviderConfig = {
 ### Custom Secret Provider
 
 ```typescript
-import { SecretProvider, SecretResolutionResult } from '@symbiont/secrets';
+import { SecretProvider, SecretResolutionResult } from '@symbi/secrets';
 
 class DatabaseSecretProvider implements SecretProvider {
   name = 'database';

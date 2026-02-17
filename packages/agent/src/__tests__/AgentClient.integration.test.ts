@@ -8,7 +8,7 @@ import type {
   AgentStatusResponse,
   ExecutionResult,
   AgentHistoryResponse,
-} from '@symbiont/types';
+} from '@symbi/types';
 
 describe('AgentClient Integration Tests', () => {
   let testEnv: TestEnvironment;

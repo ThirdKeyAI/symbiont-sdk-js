@@ -1,5 +1,5 @@
 {
-  "name": "@symbiont/agent",
+  "name": "@symbi/agent",
   "version": "1.0.0",
   "description": "Agent management and execution for Symbiont SDK",
   "main": "dist/index.js",
@@ -17,8 +17,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@symbiont/core": "^1.0.0",
-    "@symbiont/types": "^1.0.0",
+    "@symbi/core": "^1.0.0",
+    "@symbi/types": "^1.0.0",
     "agentpin": "^0.2.0",
     "zod": "^3.22.0"
   },

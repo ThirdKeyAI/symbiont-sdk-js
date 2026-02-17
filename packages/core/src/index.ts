@@ -1,9 +1,9 @@
 /**
- * @symbiont/core - Core Symbiont SDK functionality and SymbiontClient
+ * @symbi/core - Core Symbiont SDK functionality and SymbiontClient
  */
 
-// Re-export types from @symbiont/types for convenience
-export * from '@symbiont/types';
+// Re-export types from @symbi/types for convenience
+export * from '@symbi/types';
 
 // Export main client
 export { SymbiontClient } from './client';

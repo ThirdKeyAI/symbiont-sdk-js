@@ -25,14 +25,14 @@
     "CHANGELOG.md"
   ],
   "rules": [
-    "Import from @symbiont/core for client, types, and all standalone modules (webhook verification, skill scanning, markdown memory, metrics export)",
+    "Import from @symbi/core for client, types, and all standalone modules (webhook verification, skill scanning, markdown memory, metrics export)",
     "Use SymbiontClient as the main entry point — sub-clients (agents, agentpin, schedules, channels, workflows, metricsClient, system, secrets, mcp, toolReview, http) are lazy-loaded on first access",
     "Webhook verification: use createProviderVerifier('GITHUB' | 'STRIPE' | 'SLACK' | 'CUSTOM', secret) for known providers; HmacVerifier and JwtVerifier for custom setups",
     "AgentPin credentials use ES256 (ECDSA P-256) exclusively — never accept other algorithms",
     "MarkdownMemoryStore, SkillScanner, SkillLoader, FileMetricsExporter, CompositeExporter, MetricsCollector are standalone modules — import directly, not via client sub-clients",
-    "Type definitions with Zod schemas live in @symbiont/types — re-exported from @symbiont/core for convenience",
+    "Type definitions with Zod schemas live in @symbi/types — re-exported from @symbi/core for convenience",
     "SkillScanner includes 10 built-in ClawHavoc security rules — always scan untrusted skills before loading",
     "FileMetricsExporter and MarkdownMemoryStore use atomic file writes (tempfile + rename) for data safety",
-    "Monorepo structure: @symbiont/core (main), @symbiont/types (shared types + Zod), @symbiont/agent (agent/schedule/channel/workflow/agentpin clients)"
+    "Monorepo structure: @symbi/core (main), @symbi/types (shared types + Zod), @symbi/agent (agent/schedule/channel/workflow/agentpin clients)"
   ]
 }

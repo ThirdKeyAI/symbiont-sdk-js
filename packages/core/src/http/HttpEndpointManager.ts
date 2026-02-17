@@ -9,7 +9,7 @@
 import { EventEmitter } from 'events';
 import express, { Express, Request, Response, NextFunction, Router } from 'express';
 import { Server } from 'http';
-import { AuthUser } from '@symbiont/types';
+import { AuthUser } from '@symbi/types';
 import { 
   HttpEndpointCreateRequest,
   HttpEndpointInfo,
@@ -19,7 +19,7 @@ import {
   HttpEndpointConfig,
   HttpMethod,
   AuthRequirement
-} from '@symbiont/types';
+} from '@symbi/types';
 import { EndpointMetrics } from './EndpointMetrics';
 import { AuthManager } from '../auth/AuthManager';
 

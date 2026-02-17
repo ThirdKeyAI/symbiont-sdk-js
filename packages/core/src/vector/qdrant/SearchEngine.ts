@@ -4,7 +4,7 @@ import {
   SearchOptions,
   SearchResult,
   VectorPoint,
-} from '@symbiont/types';
+} from '@symbi/types';
 
 /**
  * Handles semantic search operations in Qdrant

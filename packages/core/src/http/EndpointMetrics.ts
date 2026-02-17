@@ -5,7 +5,7 @@
  * including request counts, response times, error rates, and performance statistics.
  */
 
-import { EndpointMetrics as IEndpointMetrics } from '@symbiont/types';
+import { EndpointMetrics as IEndpointMetrics } from '@symbi/types';
 
 export class EndpointMetrics implements IEndpointMetrics {
   public requestCount: number = 0;

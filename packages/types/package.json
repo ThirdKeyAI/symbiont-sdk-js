@@ -1,5 +1,5 @@
 {
-  "name": "@symbiont/types",
+  "name": "@symbi/types",
   "version": "1.0.0",
   "description": "Shared TypeScript interfaces and Zod schemas for Symbiont SDK",
   "main": "dist/index.js",

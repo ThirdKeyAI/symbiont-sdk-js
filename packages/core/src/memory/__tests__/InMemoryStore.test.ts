@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { InMemoryStore } from '../InMemoryStore';
-import { MemoryLevel } from '@symbiont/types';
+import { MemoryLevel } from '@symbi/types';
 
 describe('InMemoryStore', () => {
   let store: InMemoryStore;

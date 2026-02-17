@@ -1,10 +1,10 @@
 /**
- * @symbiont/policy - Policy builder utilities for the Symbiont SDK
+ * @symbi/policy - Policy builder utilities for the Symbiont SDK
  */
 
 export { PolicyBuilder, createPolicyBuilder } from './PolicyBuilder';
 
-// Re-export policy types from @symbiont/types for convenience
+// Re-export policy types from @symbi/types for convenience
 export {
   Policy,
   PolicyRule,
@@ -19,4 +19,4 @@ export {
   PolicyEvaluationContext,
   PolicyEvaluationResult,
   AuditSpecification
-} from '@symbiont/types';
+} from '@symbi/types';

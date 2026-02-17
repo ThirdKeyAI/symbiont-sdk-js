@@ -8,7 +8,7 @@ import {
   SecretNotFoundError,
   SecretTimeoutError,
   ProviderConfig
-} from '@symbiont/types';
+} from '@symbi/types';
 
 /**
  * SecretManager provides a unified interface for resolving secrets from multiple sources

@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { readFileSync, existsSync } from 'fs';
-import { SymbiontClient } from '@symbiont/core';
+import { SymbiontClient } from '@symbi/core';
 import { getConfig } from '../utils/config';
 import { AuthenticationError, ValidationError, logSuccess, logInfo, logVerbose } from '../utils/error-handler';
 import { formatTable, formatKeyValue, formatJson } from '../utils/output';

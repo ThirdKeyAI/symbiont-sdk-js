@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { SecretManager } from '../SecretManager';
-import { SecretManagerConfig, SecretError, SecretNotFoundError, SecretTimeoutError } from '@symbiont/types';
+import { SecretManagerConfig, SecretError, SecretNotFoundError, SecretTimeoutError } from '@symbi/types';
 import { MockSecretManager } from '../../../testing/src/mocks/MockSecretManager';
 
 describe('SecretManager', () => {

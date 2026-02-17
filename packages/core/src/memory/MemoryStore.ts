@@ -10,7 +10,7 @@ import {
   MemoryStats,
   MemoryStore as IMemoryStore,
   MemoryStoreConfig
-} from '@symbiont/types';
+} from '@symbi/types';
 
 /**
  * Abstract memory store implementation

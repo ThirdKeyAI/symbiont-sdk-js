@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import type { ScanFinding, ScanResult, ScanRule, SkillMetadata, LoadedSkill, SkillLoaderConfig } from '@symbiont/types';
-import { ScanSeverityType, SignatureStatusType } from '@symbiont/types';
+import type { ScanFinding, ScanResult, ScanRule, SkillMetadata, LoadedSkill, SkillLoaderConfig } from '@symbi/types';
+import { ScanSeverityType, SignatureStatusType } from '@symbi/types';
 
 // Re-export types for convenience
 export type { ScanFinding, ScanResult, ScanRule, SkillMetadata, LoadedSkill, SkillLoaderConfig };

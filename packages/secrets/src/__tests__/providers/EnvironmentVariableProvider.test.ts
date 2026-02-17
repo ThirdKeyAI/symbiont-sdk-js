@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { EnvironmentVariableProvider } from '../../providers/EnvironmentVariableProvider';
-import { EnvironmentVariableProviderConfig } from '@symbiont/types';
+import { EnvironmentVariableProviderConfig } from '@symbi/types';
 
 describe('EnvironmentVariableProvider', () => {
   let provider: EnvironmentVariableProvider;
