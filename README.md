@@ -344,7 +344,59 @@ const schedules = await client.schedules.list();
 const health = await client.schedules.getSchedulerHealth();
 ```
 
-## What's New in v0.6.0
+## Reasoning Loop (v1.6.0)
+
+Run autonomous reasoning loops with policy gates, circuit breakers, and knowledge recall:
+
+```typescript
+import { SymbiontClient } from '@symbi/core';
+
+const client = new SymbiontClient({ apiKey: process.env.SYMBIONT_API_KEY });
+
+// Run a reasoning loop
+const response = await client.reasoning.runLoop('agent-1', {
+  config: { max_iterations: 10, timeout_ms: 60000 },
+  initial_message: 'Analyze the latest sales data and create a report.',
+});
+
+console.log('Output:', response.result.output);
+console.log('Iterations:', response.result.iterations);
+console.log('Termination:', response.result.termination_reason.type);
+
+// Check loop status
+const status = await client.reasoning.getLoopStatus('agent-1', response.loop_id);
+
+// Read journal entries
+const journal = await client.reasoning.getJournalEntries('agent-1', { limit: 50 });
+
+// Cedar policy management
+await client.reasoning.addCedarPolicy('agent-1', {
+  name: 'deny-file-write',
+  source: 'forbid(principal, action == "tool_call", resource) when { resource.name == "write_file" };',
+  active: true,
+});
+const policies = await client.reasoning.listCedarPolicies('agent-1');
+
+// Circuit breaker status
+const breakers = await client.reasoning.getCircuitBreakerStatus('agent-1');
+
+// Knowledge bridge
+await client.reasoning.storeKnowledge('agent-1', 'sales', 'grew_by', '15%');
+const facts = await client.reasoning.recallKnowledge('agent-1', 'sales growth');
+```
+
+## What's New in v1.6.0
+
+- **Reasoning Loop** — `client.reasoning.runLoop()`, `getLoopStatus()`, `cancelLoop()` for autonomous ORGA cycles
+- **Journal System** — `getJournalEntries()`, `compactJournal()` for loop event replay and auditing
+- **Cedar Policies** — `listCedarPolicies()`, `addCedarPolicy()`, `evaluateCedarPolicy()` for action-level governance
+- **Circuit Breakers** — `getCircuitBreakerStatus()`, `resetCircuitBreaker()` for tool failure isolation
+- **Knowledge Bridge** — `recallKnowledge()`, `storeKnowledge()` for persistent agent memory
+- **Type Definitions** — Zod schemas for all reasoning types in `@symbi/types`
+
+### Previous Releases
+
+#### v0.6.0
 
 - **Webhook Verification** — `HmacVerifier`, `JwtVerifier`, provider presets (GitHub, Stripe, Slack)
 - **Markdown Memory** — `MarkdownMemoryStore` for file-based agent context persistence

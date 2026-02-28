@@ -53,6 +53,9 @@ export * from './skills';
 // Metrics types
 export * from './metrics';
 
+// Reasoning Loop types
+export * from './reasoning';
+
 // Common utility types
 export interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';

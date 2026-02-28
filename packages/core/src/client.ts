@@ -24,6 +24,7 @@ export class SymbiontClient {
   private _http?: any; // HttpEndpointManager
   private _agentpin?: any; // AgentPinClient
   private _metricsClient?: any; // MetricsApiClient
+  private _reasoning?: any; // ReasoningClient
 
   /**
    * Create a new Symbiont SDK client
@@ -293,6 +294,17 @@ export class SymbiontClient {
       this._agentpin = new AgentPinClient(this);
     }
     return this._agentpin;
+  }
+
+  /**
+   * Lazy-loaded reasoning client for loop, journal, Cedar, circuit breaker, and knowledge operations
+   */
+  get reasoning(): any {
+    if (!this._reasoning) {
+      const { ReasoningClient } = require('./ReasoningClient');
+      this._reasoning = new ReasoningClient(this);
+    }
+    return this._reasoning;
   }
 
   /**

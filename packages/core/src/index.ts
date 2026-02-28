@@ -47,6 +47,9 @@ export type { SignatureVerifier, WebhookProviderName } from './WebhookVerifier';
 // Export skill scanning and loading
 export { SkillScanner, SkillLoader } from './SkillScanner';
 
+// Export reasoning client
+export { ReasoningClient } from './ReasoningClient';
+
 // Export metrics
 export {
   FileMetricsExporter,
