@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - 2026-02-28
+
+### Added
+
+#### Reasoning Loop
+- **ReasoningClient** — Full ORGA (Observe–Reason–Ground–Act) cycle client with 15 methods and 45 tests
+- Reasoning Loop types with Zod schemas for all ORGA cycle types
+- Cedar policy evaluation, journal system, circuit breaker, knowledge bridge types
+
+### Changed
+- Version alignment with Symbiont runtime v1.6.1
+
+---
+
 ## [0.6.0] - 2026-02-15
 
 ### Added
