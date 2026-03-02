@@ -54,5 +54,5 @@
     "url": "https://github.com/ThirdKeyAI/symbiont-sdk-js.git"
   },
   "author": "Jascha Wanger \\ ThirdKey.ai",
-  "license": "MIT"
+  "license": "Apache-2.0"
 }
