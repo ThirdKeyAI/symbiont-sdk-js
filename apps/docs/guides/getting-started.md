@@ -30,7 +30,21 @@ cargo build --release
 cargo run -- mcp --port 8080
 ```
 
-### Option 3: Use Pre-built Binary
+### Option 3: Homebrew
+
+```bash
+brew tap thirdkeyai/tap && brew install symbi
+symbi mcp --port 8080
+```
+
+### Option 4: Install Script
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/thirdkeyai/symbiont/main/scripts/install.sh | bash
+symbi mcp --port 8080
+```
+
+### Option 5: Pre-built Binary
 
 Download the latest release from [GitHub Releases](https://github.com/thirdkeyai/symbiont/releases) and run:
 
@@ -38,6 +52,8 @@ Download the latest release from [GitHub Releases](https://github.com/thirdkeyai
 # Extract and run
 ./symbi mcp --port 8080
 ```
+
+> **Note:** Pre-built binaries are tested but considered less reliable than cargo install or Docker.
 
 ### Verify Runtime is Running
 

@@ -18,7 +18,19 @@ The Symbiont SDK requires a running Symbiont runtime. Choose one of these option
 docker run --rm -p 8080:8080 ghcr.io/thirdkeyai/symbi:latest mcp
 ```
 
-#### Option 2: Build from Source
+#### Option 2: Homebrew
+```bash
+brew tap thirdkeyai/tap && brew install symbi
+symbi mcp --port 8080
+```
+
+#### Option 3: Install Script
+```bash
+curl -fsSL https://raw.githubusercontent.com/thirdkeyai/symbiont/main/scripts/install.sh | bash
+symbi mcp --port 8080
+```
+
+#### Option 4: Build from Source
 ```bash
 # Clone and build the runtime
 git clone https://github.com/thirdkeyai/symbiont
