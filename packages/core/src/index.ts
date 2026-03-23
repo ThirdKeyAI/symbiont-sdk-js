@@ -50,6 +50,19 @@ export { SkillScanner, SkillLoader } from './SkillScanner';
 // Export reasoning client
 export { ReasoningClient } from './ReasoningClient';
 
+// Export communication policy gate client
+export { CommunicationClient } from './CommunicationClient';
+export type { CommunicationRule, CommunicationEvaluation } from './CommunicationClient';
+
+// Export ToolClad client
+export { ToolCladClient } from './ToolCladClient';
+export type {
+  ToolManifestInfo,
+  ToolValidationResult,
+  ToolTestResult,
+  ToolExecutionResult,
+} from './ToolCladClient';
+
 // Export metrics
 export {
   FileMetricsExporter,

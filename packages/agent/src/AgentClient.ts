@@ -128,6 +128,21 @@ export class AgentClient {
   }
 
   /**
+   * Re-execute a previously completed agent with optional new input
+   * POST /api/v1/agents/{id}/re-execute
+   */
+  async reExecuteAgent(agentId: string, input?: unknown): Promise<ExecutionResult> {
+    if (!agentId) {
+      throw new Error('Agent ID is required');
+    }
+
+    return this.makeRequest<ExecutionResult>(`/api/v1/agents/${agentId}/re-execute`, {
+      method: 'POST',
+      body: input !== undefined ? { input } : {},
+    });
+  }
+
+  /**
    * Get agent execution history
    * GET /agents/{id}/history
    */

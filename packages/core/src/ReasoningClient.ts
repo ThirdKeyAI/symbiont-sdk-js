@@ -175,6 +175,26 @@ export class ReasoningClient {
   }
 
   // ---------------------------------------------------------------------------
+  // ORGA-adaptive
+  // ---------------------------------------------------------------------------
+
+  /** Get tool profiles for an agent. GET /api/v1/agents/{agentId}/reasoning/tool-profiles */
+  async getToolProfiles(agentId: string): Promise<Record<string, unknown>[]> {
+    return this.makeRequest<Record<string, unknown>[]>(
+      `/api/v1/agents/${agentId}/reasoning/tool-profiles`,
+      { method: 'GET' },
+    );
+  }
+
+  /** Get loop diagnostics. GET /api/v1/agents/{agentId}/reasoning/{loopId}/diagnostics */
+  async getLoopDiagnostics(agentId: string, loopId: string): Promise<Record<string, unknown>> {
+    return this.makeRequest<Record<string, unknown>>(
+      `/api/v1/agents/${agentId}/reasoning/${loopId}/diagnostics`,
+      { method: 'GET' },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
   // Internal
   // ---------------------------------------------------------------------------
 

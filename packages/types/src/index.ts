@@ -56,6 +56,12 @@ export * from './metrics';
 // Reasoning Loop types
 export * from './reasoning';
 
+// Communication Policy Gate types
+export * from './communication';
+
+// ToolClad types
+export * from './toolclad';
+
 // Common utility types
 export interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';

@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.1] - 2026-03-23
+
+### Added
+
+#### CommunicationPolicyGate Client
+- **CommunicationClient** — Inter-agent communication rule management and evaluation
+  - `listRules()` — List all communication rules
+  - `addRule()` — Add a communication policy rule (allow/deny with priority and depth)
+  - `removeRule()` — Remove a communication rule by ID
+  - `evaluate()` — Evaluate whether a sender-to-recipient message is allowed
+- Communication types with Zod schemas (`CommunicationRule`, `CommunicationEvaluation`, `EvaluateCommunicationRequest`)
+
+#### ToolClad Client
+- **ToolCladClient** — Security-scanned tool manifest management and execution
+  - `listTools()` — List all registered tool manifests
+  - `validateManifest()` — Validate a tool manifest at a given path
+  - `testTool()` — Dry-run a tool with arguments
+  - `getSchema()` — Get JSON schema for a tool
+  - `executeTool()` — Execute a tool with arguments and get scan results
+  - `getToolInfo()` — Get detailed info for a specific tool
+  - `reloadTools()` — Reload tool manifests from disk
+- ToolClad types with Zod schemas (`ToolManifestInfo`, `ToolValidationResult`, `ToolTestResult`, `ToolExecutionResult`)
+
+#### Agent Lifecycle
+- `AgentClient.reExecuteAgent()` — Re-execute a previously completed agent with optional new input
+
+#### ORGA-adaptive Features
+- `ReasoningClient.getToolProfiles()` — Get tool profiles for an agent
+- `ReasoningClient.getLoopDiagnostics()` — Get diagnostics for a specific reasoning loop
+
+### Changed
+- Version alignment with Symbiont runtime v1.8.1
+- All package versions bumped to 1.8.1
+- New clients exported from `@symbi/core` barrel (`CommunicationClient`, `ToolCladClient`)
+- New types exported from `@symbi/types` barrel (`communication`, `toolclad`)
+
+---
+
 ## [1.6.1] - 2026-02-28
 
 ### Added
