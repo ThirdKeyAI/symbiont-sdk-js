@@ -397,7 +397,31 @@ await client.reasoning.storeKnowledge('agent-1', 'sales', 'grew_by', '15%');
 const facts = await client.reasoning.recallKnowledge('agent-1', 'sales growth');
 ```
 
-## What's New in v1.6.0
+## What's New in v1.10.0
+
+- **HTTP Input LLM invocation types** — `WebhookInvocationResponse` discriminated
+  union covering both `execution_started` (runtime dispatch) and `completed`
+  (on-demand LLM ORGA loop) response shapes returned by Symbiont's HTTP Input
+  handler, plus `WebhookToolRun` and `WebhookInvocationRequest` types with
+  Zod schemas.
+- **Alignment with Symbiont runtime v1.10.0** — all package versions bumped to
+  1.10.0. ToolClad v0.4.0 additions in the runtime (session / browser modes,
+  HTTP and MCP proxy backends, output parsers, custom types, secrets
+  injection, W3C `traceparent` propagation) are transparent to existing SDK
+  type shapes; the `backend` string on `ToolManifestInfo` now accepts
+  `"http"`, `"mcp"`, `"session"`, and `"browser"` in addition to the
+  previously documented values.
+
+### Previous Releases
+
+#### v1.8.1
+
+- **CommunicationPolicyGate Client** — `listRules()`, `addRule()`, `removeRule()`, `evaluate()` for inter-agent message governance
+- **ToolCladClient** — `listTools()`, `validateManifest()`, `testTool()`, `getSchema()`, `executeTool()`, `getToolInfo()`, `reloadTools()`
+- **Agent lifecycle** — `AgentClient.reExecuteAgent()` for re-running completed agents
+- **ORGA-adaptive features** — `ReasoningClient.getToolProfiles()`, `getLoopDiagnostics()`
+
+#### v1.6.0
 
 - **Reasoning Loop** — `client.reasoning.runLoop()`, `getLoopStatus()`, `cancelLoop()` for autonomous ORGA cycles
 - **Journal System** — `getJournalEntries()`, `compactJournal()` for loop event replay and auditing
@@ -405,8 +429,6 @@ const facts = await client.reasoning.recallKnowledge('agent-1', 'sales growth');
 - **Circuit Breakers** — `getCircuitBreakerStatus()`, `resetCircuitBreaker()` for tool failure isolation
 - **Knowledge Bridge** — `recallKnowledge()`, `storeKnowledge()` for persistent agent memory
 - **Type Definitions** — Zod schemas for all reasoning types in `@symbi/types`
-
-### Previous Releases
 
 #### v0.6.0
 

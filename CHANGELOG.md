@@ -5,6 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2026-04-22
+
+### Added
+
+#### HTTP Input LLM Invocation Types (Symbiont v1.10.0)
+- **`WebhookInvocationResponse`** — Discriminated union covering both HTTP Input
+  response shapes:
+  - `WebhookExecutionStartedResponse` — returned when the target agent is in
+    the `Running` state and the request is dispatched on the communication
+    bus (`status: "execution_started"`).
+  - `WebhookCompletedResponse` — returned when the agent is not running and
+    the request is served by the on-demand LLM invocation path, which runs
+    an ORGA tool-calling loop against ToolClad manifests
+    (`status: "completed"`, includes `response`, `tool_runs`, `model`,
+    `provider`, `latency_ms`).
+- **`WebhookToolRun`** — per-tool execution preview (`tool`, `input`,
+  `output_preview`). `output_preview` is truncated on a UTF-8 character
+  boundary to at most 500 bytes by the runtime.
+- **`WebhookInvocationRequest`** — caller-supplied payload (`prompt`,
+  `message`, or arbitrary JSON; optional `system_prompt` capped at
+  4096 bytes) plus pass-through of additional fields.
+- Zod schemas for all new types, including
+  `WebhookInvocationResponseSchema` as a discriminated union on `status`.
+
+### Changed
+- Version alignment with Symbiont runtime v1.10.0.
+- All package versions bumped to 1.10.0.
+
+### Notes
+- Symbiont v1.9.0 and v1.9.1 introduced ToolClad v0.4.0 runtime features
+  (session / browser execution modes, HTTP and MCP proxy backends, output
+  parsers, custom types, secrets injection, W3C `traceparent` propagation,
+  bounded channels, rate limiting, optional LanceDB feature flag). These
+  changes are runtime-side; the SDK shape for existing ToolClad types
+  (`ToolManifestInfo`, `ToolExecutionResult`, etc.) remains backward
+  compatible. The `backend` field accepts additional string values
+  (`"http"`, `"mcp"`, `"session"`, `"browser"`) as well as the previously
+  documented values.
+
+---
+
 ## [1.8.1] - 2026-03-23
 
 ### Added
