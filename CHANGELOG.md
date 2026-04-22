@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.1] - 2026-04-22
+
+### Changed — Package rename
+
+Workspace packages are renamed from the previously unpublished `@symbi/*`
+scope to unscoped names, so they can be installed directly from npm:
+
+| Before (not published) | After (npm)           |
+| ---------------------- | --------------------- |
+| `@symbi/core`          | `symbi-core`          |
+| `@symbi/types`         | `symbi-types`         |
+| `@symbi/agent`         | `symbi-agent`         |
+| `@symbi/cli`           | `symbi-cli`           |
+| `@symbi/mcp`           | `symbi-mcp`           |
+| `@symbi/policy`        | `symbi-policy`        |
+| `@symbi/secrets`       | `symbi-secrets`       |
+| `@symbi/testing`       | `symbi-testing`       |
+| `@symbi/tool-review`   | `symbi-tool-review`   |
+
+The `@symbi/*` scoped names were never published to npm, so no tagged
+version can be affected; all references in source, README, SKILL.md,
+guides, `tsconfig.json`, `vitest.config.ts`, and the `context7.json`
+index have been updated accordingly. All 1082 tests continue to pass
+after the rename.
+
+No public type or runtime behaviour changes; this is a packaging-only
+release to make the per-package install story in the README actually
+work.
+
+---
+
 ## [1.10.0] - 2026-04-22
 
 ### Added
@@ -79,8 +110,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Version alignment with Symbiont runtime v1.8.1
 - All package versions bumped to 1.8.1
-- New clients exported from `@symbi/core` barrel (`CommunicationClient`, `ToolCladClient`)
-- New types exported from `@symbi/types` barrel (`communication`, `toolclad`)
+- New clients exported from `symbi-core` barrel (`CommunicationClient`, `ToolCladClient`)
+- New types exported from `symbi-types` barrel (`communication`, `toolclad`)
 
 ---
 
@@ -131,7 +162,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **MetricsCollector** — Background interval-based periodic metrics export
 - **MetricsExportError** — Typed error class with backend context
 
-#### New Type Definitions (`@symbi/types`)
+#### New Type Definitions (`symbi-types`)
 - `packages/types/src/webhook.ts` — `WebhookProviderType`, `WebhookVerificationConfig`, `WebhookProviderPreset` with Zod schemas
 - `packages/types/src/skills.ts` — `SignatureStatusType`, `ScanSeverityType`, `ScanFinding`, `ScanResult`, `SkillMetadata`, `LoadedSkill`, `ScanRule`, `SkillLoaderConfig`, `SkillsConfig` with Zod schemas
 - `packages/types/src/metrics.ts` — `OtlpProtocol`, `OtlpConfig`, `FileMetricsConfig`, `MetricsConfig`, `SchedulerMetricsSnapshot`, `TaskManagerMetricsSnapshot`, `LoadBalancerMetricsSnapshot`, `SystemResourceMetricsSnapshot`, `MetricsSnapshot` with Zod schemas
@@ -139,7 +170,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Aligned with Symbiont Runtime v1.4.0
 - `SymbiontClient.metricsClient` property — Lazy-loaded `MetricsApiClient` sub-client
-- All new types and utilities exported from `@symbi/core`
+- All new types and utilities exported from `symbi-core`
 
 ---
 
@@ -156,7 +187,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `client.agentpin.issueCredential()` — Issue ES256 JWT credentials
   - `client.agentpin.generateKeyPair()` — P-256 key generation
   - Key pinning (TOFU) and JWK utilities
-- **AgentPin TypeScript type definitions** in `@symbi/types` (`AgentPinVerificationResult`, `AgentPinDiscoveryDocument`, `AgentPinTrustBundle`, `AgentPinVerifierConfig`, `AgentPinCredentialRequest`)
+- **AgentPin TypeScript type definitions** in `symbi-types` (`AgentPinVerificationResult`, `AgentPinDiscoveryDocument`, `AgentPinTrustBundle`, `AgentPinVerifierConfig`, `AgentPinCredentialRequest`)
 - **`SymbiontClient.agentpin`** — Lazy-loaded getter on `SymbiontClient` for direct access
 
 ### Changed
@@ -175,17 +206,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **SymbiontClient integration** — Added `schedules`, `workflows`, and `system` getters on `SymbiontClient` for direct access to all clients
 - **Real health checks** — `SymbiontClient.health()` now makes actual API calls via `SystemClient` instead of returning mock data
 
-#### Shared Types (`@symbi/types`)
+#### Shared Types (`symbi-types`)
 - `packages/types/src/schedule.ts` — All schedule interfaces (`CreateScheduleRequest`, `ScheduleSummary`, `ScheduleDetail`, `SchedulerHealthResponse`, etc.) with Zod schemas
 - `packages/types/src/system.ts` — System types (`HealthResponse`, `WorkflowExecutionRequest`, `ErrorResponse`) with Zod schemas
 
 #### Test Coverage
 - **ScheduleClient integration tests** — 25 test cases covering all 11 methods plus error handling (empty IDs, 401, 404, 500)
-- Schedule mock data added to `@symbi/testing`
+- Schedule mock data added to `symbi-testing`
 
 ### Changed
-- `ScheduleClient` now imports types from `@symbi/types` instead of defining them inline
-- Schedule types re-exported from `@symbi/agent` for backward compatibility
+- `ScheduleClient` now imports types from `symbi-types` instead of defining them inline
+- Schedule types re-exported from `symbi-agent` for backward compatibility
 
 ---
 

@@ -1,5 +1,5 @@
 /**
- * @symbi/cli - Command-line interface for Symbiont SDK
+ * symbi-cli - Command-line interface for Symbiont SDK
  */
 
 // Export main CLI program for programmatic usage

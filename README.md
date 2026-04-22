@@ -42,13 +42,13 @@ cargo run -- mcp --port 8080
 ### Installation
 
 ```bash
-npm install @symbi/core
+npm install symbi-core
 ```
 
 ### Hello World
 
 ```typescript
-import { SymbiontClient } from '@symbi/core';
+import { SymbiontClient } from 'symbi-core';
 
 const client = new SymbiontClient({
   apiKey: process.env.SYMBIONT_API_KEY,
@@ -107,12 +107,12 @@ Complete API documentation with examples and type definitions
 
 | Package | Purpose | Installation |
 |---------|---------|--------------|
-| **[@symbi/core](./packages/core)** | Main client and authentication | `npm install @symbi/core` |
-| **[@symbi/agent](./packages/agent)** | Agent lifecycle management | `npm install @symbi/agent` |
-| **[@symbi/policy](./packages/policy)** | Policy creation and validation | `npm install @symbi/policy` |
-| **[@symbi/secrets](./packages/secrets)** | Secure secrets management | `npm install @symbi/secrets` |
-| **[@symbi/tool-review](./packages/tool-review)** | Security review workflow | `npm install @symbi/tool-review` |
-| **[@symbi/mcp](./packages/mcp)** | MCP protocol integration | `npm install @symbi/mcp` |
+| **[symbi-core](./packages/core)** | Main client and authentication | `npm install symbi-core` |
+| **[symbi-agent](./packages/agent)** | Agent lifecycle management | `npm install symbi-agent` |
+| **[symbi-policy](./packages/policy)** | Policy creation and validation | `npm install symbi-policy` |
+| **[symbi-secrets](./packages/secrets)** | Secure secrets management | `npm install symbi-secrets` |
+| **[symbi-tool-review](./packages/tool-review)** | Security review workflow | `npm install symbi-tool-review` |
+| **[symbi-mcp](./packages/mcp)** | MCP protocol integration | `npm install symbi-mcp` |
 
 ## 🔑 AgentPin: Credential Verification
 
@@ -212,7 +212,7 @@ const insights = await client.agents.executeAgent(agent.id, {
 
 ### Policy Management
 ```typescript
-import { PolicyBuilder } from '@symbi/policy';
+import { PolicyBuilder } from 'symbi-policy';
 
 // Create access control policy
 const policy = new PolicyBuilder('dataAccessPolicy')
@@ -226,7 +226,7 @@ const policy = new PolicyBuilder('dataAccessPolicy')
 
 ### Secrets Management
 ```typescript
-import { SecretManager } from '@symbi/secrets';
+import { SecretManager } from 'symbi-secrets';
 
 const secrets = new SecretManager({
   providers: [
@@ -245,7 +245,7 @@ Verify inbound webhook signatures from GitHub, Stripe, Slack, or custom provider
 ```typescript
 import {
     HmacVerifier, JwtVerifier, createProviderVerifier,
-} from '@symbi/core';
+} from 'symbi-core';
 
 // Use a provider preset
 const verifier = createProviderVerifier('GITHUB', Buffer.from(secret));
@@ -271,7 +271,7 @@ Provider presets: `GITHUB`, `STRIPE`, `SLACK`, `CUSTOM`.
 File-based agent context that survives restarts:
 
 ```typescript
-import { MarkdownMemoryStore } from '@symbi/core';
+import { MarkdownMemoryStore } from 'symbi-core';
 
 const store = new MarkdownMemoryStore('/data/memory', 30);
 
@@ -294,7 +294,7 @@ const stats = await store.getStorageStats();
 Scan and load agent skill definitions with security scanning:
 
 ```typescript
-import { SkillScanner, SkillLoader } from '@symbi/core';
+import { SkillScanner, SkillLoader } from 'symbi-core';
 
 // Scan for security issues (10 built-in ClawHavoc rules)
 const scanner = new SkillScanner();
@@ -323,7 +323,7 @@ Runtime metrics retrieval and local export:
 ```typescript
 import {
     FileMetricsExporter, CompositeExporter, MetricsCollector,
-} from '@symbi/core';
+} from 'symbi-core';
 
 // Fetch from runtime API
 const snapshot = await client.metricsClient.getSnapshot();
@@ -361,7 +361,7 @@ const health = await client.schedules.getSchedulerHealth();
 Run autonomous reasoning loops with policy gates, circuit breakers, and knowledge recall:
 
 ```typescript
-import { SymbiontClient } from '@symbi/core';
+import { SymbiontClient } from 'symbi-core';
 
 const client = new SymbiontClient({ apiKey: process.env.SYMBIONT_API_KEY });
 
@@ -428,7 +428,7 @@ const facts = await client.reasoning.recallKnowledge('agent-1', 'sales growth');
 - **Cedar Policies** — `listCedarPolicies()`, `addCedarPolicy()`, `evaluateCedarPolicy()` for action-level governance
 - **Circuit Breakers** — `getCircuitBreakerStatus()`, `resetCircuitBreaker()` for tool failure isolation
 - **Knowledge Bridge** — `recallKnowledge()`, `storeKnowledge()` for persistent agent memory
-- **Type Definitions** — Zod schemas for all reasoning types in `@symbi/types`
+- **Type Definitions** — Zod schemas for all reasoning types in `symbi-types`
 
 #### v0.6.0
 
@@ -436,7 +436,7 @@ const facts = await client.reasoning.recallKnowledge('agent-1', 'sales growth');
 - **Markdown Memory** — `MarkdownMemoryStore` for file-based agent context persistence
 - **Agent Skills** — `SkillScanner` with 10 ClawHavoc rules, `SkillLoader` with frontmatter parsing
 - **Metrics** — `MetricsApiClient` sub-client, `FileMetricsExporter`, `CompositeExporter`, `MetricsCollector`
-- **Type Definitions** — Zod schemas for webhooks, skills, and metrics in `@symbi/types`
+- **Type Definitions** — Zod schemas for webhooks, skills, and metrics in `symbi-types`
 
 ## License
 

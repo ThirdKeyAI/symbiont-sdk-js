@@ -2,7 +2,7 @@ import {
   SecretProvider,
   SecretResolutionResult,
   EnvironmentVariableProviderConfig
-} from '@symbi/types';
+} from 'symbi-types';
 
 /**
  * Provider that resolves secrets from environment variables

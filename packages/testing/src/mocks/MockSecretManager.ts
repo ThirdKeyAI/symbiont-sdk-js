@@ -3,7 +3,7 @@ import {
   SecretProvider,
   SecretResolutionResult,
   SecretManagerConfig
-} from '@symbi/types';
+} from 'symbi-types';
 
 /**
  * Mock secret manager for testing

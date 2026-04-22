@@ -8,7 +8,7 @@ import {
   PointDeleteRequest,
   ScrollRequest,
   ScrollResponse,
-} from '@symbi/types';
+} from 'symbi-types';
 
 /**
  * Handles CRUD operations on vectors in Qdrant

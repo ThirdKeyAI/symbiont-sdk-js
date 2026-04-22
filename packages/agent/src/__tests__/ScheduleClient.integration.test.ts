@@ -15,7 +15,7 @@ import {
 import type {
   CreateScheduleRequest,
   UpdateScheduleRequest,
-} from '@symbi/types';
+} from 'symbi-types';
 
 describe('ScheduleClient Integration Tests', () => {
   let testEnv: TestEnvironment;

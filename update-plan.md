@@ -451,8 +451,8 @@ graph TD
 ## Deployment Considerations
 
 ### Package Structure Updates
-- New packages: `@symbi/memory`, `@symbi/qdrant`
-- Updated packages: `@symbi/core`, `@symbi/types`
+- New packages: `symbi-memory`, `symbi-qdrant`
+- Updated packages: `symbi-core`, `symbi-types`
 - Dependency updates: Add Redis client, Qdrant client
 
 ### Environment Variables

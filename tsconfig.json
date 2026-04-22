@@ -10,7 +10,7 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@symbi/*": ["packages/*/src"]
+      "symbi-*": ["packages/*/src"]
     },
     "skipLibCheck": true,
     "esModuleInterop": true,
