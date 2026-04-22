@@ -1,4 +1,4 @@
-import { SymbiontConfig, TokenData, TokenCache } from '@symbi/types';
+import { SymbiontConfig, TokenData, TokenCache } from 'symbi-types';
 
 /**
  * Authentication manager for handling dual API authentication

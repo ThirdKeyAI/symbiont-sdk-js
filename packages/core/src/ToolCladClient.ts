@@ -1,5 +1,5 @@
-import type { SymbiontConfig } from '@symbi/types';
-import type { RequestOptions } from '@symbi/types';
+import type { SymbiontConfig } from 'symbi-types';
+import type { RequestOptions } from 'symbi-types';
 
 /**
  * Minimal interface to avoid circular dependency with SymbiontClient.

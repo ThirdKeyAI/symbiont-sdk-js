@@ -9,7 +9,7 @@ import type {
   RunReasoningLoopRequest,
   RunReasoningLoopResponse,
   SymbiontConfig,
-} from '@symbi/types';
+} from 'symbi-types';
 
 /**
  * Minimal interface to avoid circular dependency with SymbiontClient.

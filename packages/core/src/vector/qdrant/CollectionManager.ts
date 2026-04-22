@@ -5,7 +5,7 @@ import {
   CollectionInfo,
   CollectionCreateRequest,
   BatchOperationResult,
-} from '@symbi/types';
+} from 'symbi-types';
 
 /**
  * Manages collection lifecycle operations in Qdrant

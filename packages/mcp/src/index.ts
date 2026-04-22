@@ -1,9 +1,9 @@
 /**
- * @symbi/mcp - MCP client for workflow execution and management
+ * symbi-mcp - MCP client for workflow execution and management
  */
 
-// Re-export MCP types from @symbi/types for convenience
-export * from '@symbi/types';
+// Re-export MCP types from symbi-types for convenience
+export * from 'symbi-types';
 
 // Export main MCP client
 export { McpClient } from './McpClient';

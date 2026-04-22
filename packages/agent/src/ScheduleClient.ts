@@ -12,7 +12,7 @@ import {
   ScheduleActionResponse,
   DeleteScheduleResponse,
   SchedulerHealthResponse,
-} from '@symbi/types';
+} from 'symbi-types';
 
 /**
  * Simple interface to avoid circular dependency with SymbiontClient

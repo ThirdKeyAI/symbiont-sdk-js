@@ -1,4 +1,4 @@
-import { Role, Permission, AuthUser } from '@symbi/types';
+import { Role, Permission, AuthUser } from 'symbi-types';
 
 /**
  * Role-Based Access Control (RBAC) Manager

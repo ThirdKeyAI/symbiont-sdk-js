@@ -15,4 +15,4 @@ export type {
   JWTPayload,
   TokenValidationResult,
   BlacklistEntry,
-} from '@symbi/types';
+} from 'symbi-types';

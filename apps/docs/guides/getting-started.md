@@ -73,7 +73,7 @@ curl http://localhost:8080/health
 Install the core SDK package:
 
 ```bash
-npm install @symbi/core
+npm install symbi-core
 ```
 
 ### Complete Installation (Recommended)
@@ -82,20 +82,20 @@ For full functionality, install the complete SDK:
 
 ```bash
 # Core packages
-npm install @symbi/core @symbi/agent @symbi/policy
+npm install symbi-core symbi-agent symbi-policy
 
 # Optional packages
-npm install @symbi/secrets @symbi/tool-review @symbi/mcp
+npm install symbi-secrets symbi-tool-review symbi-mcp
 ```
 
 ### Package Manager Alternatives
 
 ```bash
 # Using Yarn
-yarn add @symbi/core
+yarn add symbi-core
 
 # Using pnpm
-pnpm add @symbi/core
+pnpm add symbi-core
 ```
 
 ## 🔧 Configuration
@@ -119,7 +119,7 @@ export SYMBIONT_ENVIRONMENT="production"
 Create a new Symbiont client:
 
 ```typescript
-import { SymbiontClient } from '@symbi/core';
+import { SymbiontClient } from 'symbi-core';
 
 const client = new SymbiontClient({
   apiKey: process.env.SYMBIONT_API_KEY,
@@ -173,7 +173,7 @@ Let's create and execute a simple agent:
 ### Step 1: Create an Agent
 
 ```typescript
-import { SymbiontClient } from '@symbi/core';
+import { SymbiontClient } from 'symbi-core';
 
 const client = new SymbiontClient({
   apiKey: process.env.SYMBIONT_API_KEY
@@ -242,7 +242,7 @@ import {
   AuthenticationError, 
   ValidationError, 
   AgentNotFoundError 
-} from '@symbi/core';
+} from 'symbi-core';
 
 try {
   const result = await client.agents.executeAgent(agentId, params);
@@ -275,7 +275,7 @@ try {
 </head>
 <body>
   <script type="module">
-    import { SymbiontClient } from 'https://cdn.jsdelivr.net/npm/@symbi/core/dist/browser.esm.js';
+    import { SymbiontClient } from 'https://cdn.jsdelivr.net/npm/symbi-core/dist/browser.esm.js';
     
     const client = new SymbiontClient({
       apiKey: 'your-api-key',
@@ -293,7 +293,7 @@ try {
 
 ```typescript
 // Works with any modern bundler
-import { SymbiontClient } from '@symbi/core';
+import { SymbiontClient } from 'symbi-core';
 
 const client = new SymbiontClient({
   apiKey: process.env.VITE_SYMBIONT_API_KEY // or REACT_APP_SYMBIONT_API_KEY

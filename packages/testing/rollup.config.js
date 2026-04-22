@@ -26,6 +26,6 @@ export default [
         rootDir: 'src'
       })
     ],
-    external: ['@symbi/core', '@symbi/types', 'express', 'vitest']
+    external: ['symbi-core', 'symbi-types', 'express', 'vitest']
   }
 ];

@@ -1,4 +1,4 @@
-import { SymbiontConfig, EnhancedSymbiontConfig, HealthStatus, HealthResponse } from '@symbi/types';
+import { SymbiontConfig, EnhancedSymbiontConfig, HealthStatus, HealthResponse } from 'symbi-types';
 import { AuthenticationManager } from './auth';
 import { EnvManager } from './config';
 import { SystemClient } from './SystemClient';
@@ -206,7 +206,7 @@ export class SymbiontClient {
    */
   private initializeSecretsManager(): any {
     try {
-      const { SecretManager } = require('@symbi/secrets');
+      const { SecretManager } = require('symbi-secrets');
       
       const defaultConfig = {
         providers: [
@@ -250,7 +250,7 @@ export class SymbiontClient {
   get agents(): any {
     if (!this._agents) {
       // Dynamic import to avoid circular dependencies
-      const { AgentClient } = require('@symbi/agent');
+      const { AgentClient } = require('symbi-agent');
       this._agents = new AgentClient(this);
     }
     return this._agents;
@@ -261,7 +261,7 @@ export class SymbiontClient {
    */
   get schedules(): any {
     if (!this._schedules) {
-      const { ScheduleClient } = require('@symbi/agent');
+      const { ScheduleClient } = require('symbi-agent');
       this._schedules = new ScheduleClient(this);
     }
     return this._schedules;
@@ -272,7 +272,7 @@ export class SymbiontClient {
    */
   get channels(): any {
     if (!this._channels) {
-      const { ChannelClient } = require('@symbi/agent');
+      const { ChannelClient } = require('symbi-agent');
       this._channels = new ChannelClient(this);
     }
     return this._channels;
@@ -283,7 +283,7 @@ export class SymbiontClient {
    */
   get workflows(): any {
     if (!this._workflows) {
-      const { WorkflowClient } = require('@symbi/agent');
+      const { WorkflowClient } = require('symbi-agent');
       this._workflows = new WorkflowClient(this);
     }
     return this._workflows;
@@ -294,7 +294,7 @@ export class SymbiontClient {
    */
   get agentpin(): any {
     if (!this._agentpin) {
-      const { AgentPinClient } = require('@symbi/agent');
+      const { AgentPinClient } = require('symbi-agent');
       this._agentpin = new AgentPinClient(this);
     }
     return this._agentpin;
@@ -368,7 +368,7 @@ export class SymbiontClient {
   get secrets(): any {
     if (!this._secrets) {
       // Dynamic import to avoid circular dependencies
-      const { SecretManager } = require('@symbi/secrets');
+      const { SecretManager } = require('symbi-secrets');
       
       // Default configuration with environment and file providers
       const defaultConfig = {
@@ -402,7 +402,7 @@ export class SymbiontClient {
   get toolReview(): any {
     if (!this._toolReview) {
       // Dynamic import to avoid circular dependencies
-      const { ToolReviewClient } = require('@symbi/tool-review');
+      const { ToolReviewClient } = require('symbi-tool-review');
       this._toolReview = new ToolReviewClient(this);
     }
     return this._toolReview;
@@ -414,7 +414,7 @@ export class SymbiontClient {
   get mcp(): any {
     if (!this._mcp) {
       // Dynamic import to avoid circular dependencies
-      const { McpClient } = require('@symbi/mcp');
+      const { McpClient } = require('symbi-mcp');
       this._mcp = new McpClient(this);
     }
     return this._mcp;
@@ -450,7 +450,7 @@ export class SymbiontClient {
    */
   get policyBuilder(): any {
     // Dynamic import to avoid circular dependencies
-    const { PolicyBuilder } = require('@symbi/policy');
+    const { PolicyBuilder } = require('symbi-policy');
     return new PolicyBuilder();
   }
 

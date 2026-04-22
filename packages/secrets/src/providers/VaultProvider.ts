@@ -3,7 +3,7 @@ import {
   SecretResolutionResult,
   VaultProviderConfig,
   SecretProviderError
-} from '@symbi/types';
+} from 'symbi-types';
 
 /**
  * Provider that resolves secrets from HashiCorp Vault

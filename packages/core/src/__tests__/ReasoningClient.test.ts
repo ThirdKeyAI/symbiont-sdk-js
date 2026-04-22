@@ -24,7 +24,7 @@ import {
   CircuitBreakerStatusSchema,
   RunReasoningLoopRequestSchema,
   RunReasoningLoopResponseSchema,
-} from '@symbi/types';
+} from 'symbi-types';
 import { ReasoningClient } from '../ReasoningClient';
 
 // =============================================================================

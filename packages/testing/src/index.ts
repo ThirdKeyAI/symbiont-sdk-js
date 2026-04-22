@@ -1,5 +1,5 @@
 /**
- * @symbi/testing - Testing utilities for Symbiont SDK
+ * symbi-testing - Testing utilities for Symbiont SDK
  */
 
 export { MockFetch } from './mocks/MockFetch';

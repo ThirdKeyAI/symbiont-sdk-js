@@ -3,7 +3,7 @@ import {
   EmbeddingProvider,
   EmbeddingRequest,
   EmbeddingResponse,
-} from '@symbi/types';
+} from 'symbi-types';
 
 /**
  * Manages embedding generation and storage

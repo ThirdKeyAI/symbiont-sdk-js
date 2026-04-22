@@ -1,5 +1,5 @@
 /**
- * @symbi/core - Vector Database Integration
+ * symbi-core - Vector Database Integration
  */
 
 // Qdrant Integration
@@ -22,4 +22,4 @@ export type {
   EmbeddingRequest,
   EmbeddingResponse,
   CollectionCreateRequest,
-} from '@symbi/types';
+} from 'symbi-types';

@@ -1,5 +1,5 @@
 /**
- * @symbi/tool-review - Tool Review API client for Symbiont SDK
+ * symbi-tool-review - Tool Review API client for Symbiont SDK
  */
 
 export { ToolReviewClient } from './ToolReviewClient';
@@ -24,4 +24,4 @@ export type {
   ReviewStatus,
   ReviewPriority,
   ProviderInfo,
-} from '@symbi/types';
+} from 'symbi-types';

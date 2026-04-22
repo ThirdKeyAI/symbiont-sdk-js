@@ -33,7 +33,7 @@ For technical details about the SDK's design and implementation:
 ## 🔗 Quick Links
 
 - [GitHub Repository](https://github.com/thirdkeyai/symbiont-sdk-js)
-- [npm Package](https://www.npmjs.com/package/@symbi/core)
+- [npm Package](https://www.npmjs.com/package/symbi-core)
 - [Examples](../examples/)
 
 ## 📝 Contributing
