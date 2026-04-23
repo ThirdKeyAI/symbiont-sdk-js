@@ -40,8 +40,7 @@ describe('CollectionManager', () => {
       getCollection: vi.fn(),
       deleteCollection: vi.fn(),
       updateCollection: vi.fn(),
-      createAlias: vi.fn(),
-      deleteAlias: vi.fn(),
+      updateCollectionAliases: vi.fn(),
       getAliases: vi.fn(),
     };
 
@@ -135,7 +134,7 @@ describe('CollectionManager', () => {
         'test-collection',
         expect.objectContaining({
           hnsw_config: requestWithOptionals.hnsw_config,
-          optimizer_config: requestWithOptionals.optimizer_config,
+          optimizers_config: requestWithOptionals.optimizer_config,
           wal_config: requestWithOptionals.wal_config,
         })
       );
@@ -266,7 +265,15 @@ describe('CollectionManager', () => {
         indexed_vectors_count: 950,
         points_count: 1000,
         segments_count: 2,
-        config: mockCollectionInfo.config,
+        config: {
+          params: {
+            vectors: { size: 384, distance: 'Cosine' },
+            shard_number: 1,
+            replication_factor: 1,
+            write_consistency_factor: 1,
+            on_disk_payload: false,
+          },
+        },
         payload_schema: {},
       });
       expect(mockClient.getCollection).toHaveBeenCalledWith('test-collection');
@@ -363,16 +370,18 @@ describe('CollectionManager', () => {
 
   describe('createAlias', () => {
     it('should create alias successfully', async () => {
-      mockClient.createAlias.mockResolvedValue({});
+      mockClient.updateCollectionAliases.mockResolvedValue({});
 
       const result = await collectionManager.createAlias('my-alias', 'test-collection');
 
       expect(result).toBe(true);
-      expect(mockClient.createAlias).toHaveBeenCalledWith('my-alias', 'test-collection');
+      expect(mockClient.updateCollectionAliases).toHaveBeenCalledWith({
+        actions: [{ create_alias: { alias_name: 'my-alias', collection_name: 'test-collection' } }],
+      });
     });
 
     it('should throw error when alias creation fails', async () => {
-      mockClient.createAlias.mockRejectedValue(new Error('Alias failed'));
+      mockClient.updateCollectionAliases.mockRejectedValue(new Error('Alias failed'));
 
       await expect(
         collectionManager.createAlias('my-alias', 'test-collection')
@@ -384,16 +393,18 @@ describe('CollectionManager', () => {
 
   describe('deleteAlias', () => {
     it('should delete alias successfully', async () => {
-      mockClient.deleteAlias.mockResolvedValue({});
+      mockClient.updateCollectionAliases.mockResolvedValue({});
 
       const result = await collectionManager.deleteAlias('my-alias');
 
       expect(result).toBe(true);
-      expect(mockClient.deleteAlias).toHaveBeenCalledWith('my-alias');
+      expect(mockClient.updateCollectionAliases).toHaveBeenCalledWith({
+        actions: [{ delete_alias: { alias_name: 'my-alias' } }],
+      });
     });
 
     it('should throw error when alias deletion fails', async () => {
-      mockClient.deleteAlias.mockRejectedValue(new Error('Delete alias failed'));
+      mockClient.updateCollectionAliases.mockRejectedValue(new Error('Delete alias failed'));
 
       await expect(collectionManager.deleteAlias('my-alias')).rejects.toThrow(
         'Failed to delete alias my-alias: Delete alias failed'

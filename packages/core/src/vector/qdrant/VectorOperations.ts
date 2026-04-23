@@ -183,9 +183,9 @@ export class VectorOperations {
 
       const point = result[0];
       return {
-        id: point.id as string,
-        vector: point.vector || [],
-        payload: point.payload,
+        id: String(point.id),
+        vector: Array.isArray(point.vector) ? (point.vector as number[]) : [],
+        payload: (point.payload ?? undefined) as Record<string, unknown> | undefined,
       };
     } catch (error) {
       const err = error as Error;
@@ -240,11 +240,12 @@ export class VectorOperations {
 
       return {
         points: result.points.map((point: any) => ({
-          id: point.id as string,
-          vector: point.vector || [],
-          payload: point.payload,
+          id: String(point.id),
+          vector: Array.isArray(point.vector) ? (point.vector as number[]) : [],
+          payload: (point.payload ?? undefined) as Record<string, unknown> | undefined,
         })),
-        next_page_offset: result.next_page_offset,
+        next_page_offset:
+          result.next_page_offset != null ? String(result.next_page_offset) : undefined,
       };
     } catch (error) {
       const err = error as Error;

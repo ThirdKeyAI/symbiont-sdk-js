@@ -97,15 +97,16 @@ export class MarkdownMemoryStore {
       'learned patterns': 'learned_patterns',
     };
 
-    let currentSection: string | null = null;
+    type ListSection = 'facts' | 'procedures' | 'learned_patterns';
+    let currentSection: ListSection | null = null;
 
     for (const line of text.split('\n')) {
       const stripped = line.trim();
       if (stripped.startsWith('## ')) {
         const header = stripped.slice(3).trim().toLowerCase();
-        currentSection = sectionMap[header] || null;
+        currentSection = sectionMap[header] ?? null;
       } else if (stripped.startsWith('- ') && currentSection) {
-        (ctx[currentSection] as string[]).push(stripped.slice(2));
+        ctx[currentSection].push(stripped.slice(2));
       }
     }
 

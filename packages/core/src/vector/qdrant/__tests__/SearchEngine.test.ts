@@ -40,7 +40,8 @@ describe('SearchEngine', () => {
       searchBatch: vi.fn(),
       scroll: vi.fn(),
       recommend: vi.fn(),
-      discover: vi.fn(),
+      discoverPoints: vi.fn(),
+      retrieve: vi.fn(),
     };
 
     config = {
@@ -154,6 +155,10 @@ describe('SearchEngine', () => {
 
   describe('searchByPointId', () => {
     it('should search by point ID successfully', async () => {
+      const refVector = [0.1, 0.2, 0.3];
+      mockClient.retrieve.mockResolvedValue([
+        { id: 'reference-point', vector: refVector },
+      ]);
       const mockSearchResult = [
         {
           id: 'similar-1',
@@ -175,8 +180,13 @@ describe('SearchEngine', () => {
         },
       ]);
 
+      expect(mockClient.retrieve).toHaveBeenCalledWith('test-collection', {
+        ids: ['reference-point'],
+        with_vector: true,
+        with_payload: false,
+      });
       expect(mockClient.search).toHaveBeenCalledWith('test-collection', {
-        vector: { id: 'reference-point' },
+        vector: refVector,
         limit: 10,
         offset: 0,
         with_payload: true,
@@ -188,6 +198,11 @@ describe('SearchEngine', () => {
     });
 
     it('should search by point ID with custom options', async () => {
+      const refVector = [0.4, 0.5, 0.6];
+      mockClient.retrieve.mockResolvedValue([
+        { id: 'reference-point', vector: refVector },
+      ]);
+
       const options: SearchOptions = {
         limit: 3,
         score_threshold: 0.9,
@@ -198,7 +213,7 @@ describe('SearchEngine', () => {
       await searchEngine.searchByPointId('test-collection', 'reference-point', options);
 
       expect(mockClient.search).toHaveBeenCalledWith('test-collection', {
-        vector: { id: 'reference-point' },
+        vector: refVector,
         limit: 3,
         offset: 0,
         with_payload: true,
@@ -210,6 +225,9 @@ describe('SearchEngine', () => {
     });
 
     it('should throw error when search by point ID fails', async () => {
+      mockClient.retrieve.mockResolvedValue([
+        { id: 'reference-point', vector: [0.1, 0.2, 0.3] },
+      ]);
       mockClient.search.mockRejectedValue(new Error('Point search failed'));
 
       await expect(
@@ -475,8 +493,8 @@ describe('SearchEngine', () => {
       ]);
 
       expect(mockClient.recommend).toHaveBeenCalledWith('test-collection', {
-        positive: [{ id: 'good-1' }, { id: 'good-2' }],
-        negative: [{ id: 'bad-1' }],
+        positive: ['good-1', 'good-2'],
+        negative: ['bad-1'],
         limit: 10,
         offset: 0,
         with_payload: true,
@@ -517,7 +535,7 @@ describe('SearchEngine', () => {
       await searchEngine.recommend('test-collection', positive, negative);
 
       expect(mockClient.recommend).toHaveBeenCalledWith('test-collection', {
-        positive: [{ id: 'point-1' }, [0.1, 0.2, 0.3]],
+        positive: ['point-1', [0.1, 0.2, 0.3]],
         negative: [],
         limit: 10,
         offset: 0,
@@ -552,7 +570,7 @@ describe('SearchEngine', () => {
         { id: 'discovery-1', score: 0.88, payload: { discovered: true } },
       ];
 
-      mockClient.discover.mockResolvedValue(mockDiscoverResult);
+      mockClient.discoverPoints.mockResolvedValue(mockDiscoverResult);
 
       const result = await searchEngine.discover('test-collection', target, context);
 
@@ -560,56 +578,48 @@ describe('SearchEngine', () => {
         { id: 'discovery-1', score: 0.88, payload: { discovered: true }, vector: undefined },
       ]);
 
-      expect(mockClient.discover).toHaveBeenCalledWith('test-collection', {
-        target: { id: 'target-point' },
-        context: [
-          {
-            positive: [{ id: 'good-1' }, { id: 'good-2' }],
-            negative: [{ id: 'bad-1' }],
-          },
-          {
-            positive: [[0.1, 0.2, 0.3]],
-            negative: [],
-          },
-        ],
-        limit: 10,
-        offset: 0,
-        with_payload: true,
-        with_vector: false,
-        score_threshold: undefined,
-        filter: undefined,
-        params: undefined,
-      });
+      // qdrant-js discoverPoints takes flat positive/negative pair arrays;
+      // targets/IDs are passed directly (no { id } wrapper).
+      expect(mockClient.discoverPoints).toHaveBeenCalledWith(
+        'test-collection',
+        expect.objectContaining({
+          target: 'target-point',
+          context: [
+            { positive: 'good-1', negative: 'bad-1' },
+            { positive: 'good-2', negative: undefined },
+            { positive: [0.1, 0.2, 0.3], negative: undefined },
+          ],
+          limit: 10,
+          offset: 0,
+          with_payload: true,
+          with_vector: false,
+        })
+      );
     });
 
     it('should discover with vector target', async () => {
       const target = [0.5, 0.6, 0.7];
       const context = [{ positive: ['reference-1'] }];
 
-      mockClient.discover.mockResolvedValue([]);
+      mockClient.discoverPoints.mockResolvedValue([]);
 
       await searchEngine.discover('test-collection', target, context);
 
-      expect(mockClient.discover).toHaveBeenCalledWith('test-collection', {
-        target: [0.5, 0.6, 0.7],
-        context: [
-          {
-            positive: [{ id: 'reference-1' }],
-            negative: [],
-          },
-        ],
-        limit: 10,
-        offset: 0,
-        with_payload: true,
-        with_vector: false,
-        score_threshold: undefined,
-        filter: undefined,
-        params: undefined,
-      });
+      expect(mockClient.discoverPoints).toHaveBeenCalledWith(
+        'test-collection',
+        expect.objectContaining({
+          target: [0.5, 0.6, 0.7],
+          context: [{ positive: 'reference-1', negative: undefined }],
+          limit: 10,
+          offset: 0,
+          with_payload: true,
+          with_vector: false,
+        })
+      );
     });
 
     it('should throw error when discovery fails', async () => {
-      mockClient.discover.mockRejectedValue(new Error('Discovery failed'));
+      mockClient.discoverPoints.mockRejectedValue(new Error('Discovery failed'));
 
       await expect(
         searchEngine.discover('test-collection', 'target', [])
