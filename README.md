@@ -1,124 +1,207 @@
-# Symbiont JavaScript/TypeScript SDK
+<img src="https://raw.githubusercontent.com/ThirdKeyAI/Symbiont/main/logo-hz.png" alt="Symbiont">
 
-[![npm version](https://badge.fury.io/js/%40symbiont%2Fcore.svg)](https://badge.fury.io/js/%40symbiont%2Fcore)
+[![npm](https://img.shields.io/npm/v/symbi-core.svg)](https://www.npmjs.com/package/symbi-core)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-online-brightgreen)](https://docs.symbiont.dev)
 
-A comprehensive, type-safe JavaScript/TypeScript SDK for building and managing AI agents on the Symbiont platform. Get started quickly with full TypeScript support, intelligent caching, and enterprise-grade security.
+---
 
-## 🚀 Quick Start
+**Official JavaScript/TypeScript SDK for Symbiont, the policy-governed agent runtime.**
+*Same agent. Secure runtime.*
+
+This SDK is the integration surface for the [Symbiont runtime](https://github.com/thirdkeyai/symbiont). Use it from Node.js, edge runtimes, or the browser to manage agents, drive scheduled and channel-bound execution, run the ORGA reasoning loop, register ToolClad-governed tools, evaluate the Communication Policy Gate, verify webhooks, and integrate AgentPin identity — all against a runtime that enforces Cedar policy, SchemaPin tool verification, and tamper-evident audit logging.
+
+The runtime decides what an agent may do. The SDK decides how your application talks to the runtime.
+
+---
+
+## Why Symbiont
+
+AI agents are easy to demo and hard to trust. Once an agent can call tools, access files, send messages, or invoke external services, you need more than prompts and glue code. You need:
+
+- **Policy enforcement** for what an agent may do — built-in DSL and [Cedar](https://www.cedarpolicy.com/) authorization
+- **Tool verification** so execution is not blind trust — [SchemaPin](https://github.com/ThirdKeyAI/SchemaPin) cryptographic verification of MCP tools
+- **Tool contracts** for how tools execute — [ToolClad](https://github.com/ThirdKeyAI/ToolClad) declarative input validation, scope enforcement, and injection prevention
+- **Agent identity** so you know who is acting — [AgentPin](https://github.com/ThirdKeyAI/AgentPin) domain-anchored ES256 identity
+- **Audit trails** for what happened and why — cryptographically tamper-evident logs
+- **Approval gates** for sensitive actions — human review before execution when policy requires it
+
+Symbiont is the runtime that enforces all of this. This SDK is the typed, ergonomic way to drive it from JavaScript and TypeScript.
+
+---
+
+## Quick start
 
 ### Prerequisites
 
-The Symbiont SDK requires a running Symbiont runtime. Choose one of these options:
+A running Symbiont runtime is required. The fastest way:
 
-#### Option 1: Docker (Recommended)
 ```bash
-# Start Symbiont runtime with Docker
-docker run --rm -p 8080:8080 ghcr.io/thirdkeyai/symbi:latest mcp
+# Start the runtime (API on :8080, HTTP input on :8081)
+docker run --rm -p 8080:8080 -p 8081:8081 ghcr.io/thirdkeyai/symbi:latest up
 ```
 
-#### Option 2: Homebrew
-```bash
-brew tap thirdkeyai/tap && brew install symbi
-symbi mcp --port 8080
-```
+For Homebrew, install scripts, building from source, or production deployment, see the [getting-started guide](https://docs.symbiont.dev/getting-started).
 
-#### Option 3: Install Script
-```bash
-curl -fsSL https://raw.githubusercontent.com/thirdkeyai/symbiont/main/scripts/install.sh | bash
-symbi mcp --port 8080
-```
-
-#### Option 4: Build from Source
-```bash
-# Clone and build the runtime
-git clone https://github.com/thirdkeyai/symbiont
-cd symbiont
-cargo build --release
-cargo run -- mcp --port 8080
-```
-
-### Installation
+### Install
 
 ```bash
 npm install symbi-core
 ```
 
-### Hello World
+### Hello, runtime
 
 ```typescript
 import { SymbiontClient } from 'symbi-core';
 
 const client = new SymbiontClient({
   apiKey: process.env.SYMBIONT_API_KEY,
-  environment: 'production'
+  apiUrl: 'http://localhost:8080/api/v1',
 });
 
 await client.connect();
 
-// Create and execute your first agent
+// Create an agent
 const agent = await client.agents.createAgent({
   name: 'textProcessor',
   description: 'Processes and analyzes text input',
   parameters: [{ name: 'text', type: { name: 'string' }, required: true }],
   returnType: { name: 'string' },
-  capabilities: ['text_processing']
+  capabilities: ['text_processing'],
 });
 
-const result = await client.agents.executeAgent(
-  agent.id,
-  { text: 'Hello, Symbiont!' }
-);
-
-console.log('Result:', result.result);
+// Execute it
+const result = await client.agents.executeAgent(agent.id, { text: 'Hello, Symbiont!' });
+console.log(result.result);
 ```
 
-## ✨ Core Features
+---
 
-- **🤖 AI Agent Management** - Create, deploy, and execute intelligent agents
-- **🔐 Security-First** - Built-in policy management and secrets handling
-- **🔑 AgentPin Integration** - Client-side credential verification, discovery, and trust bundles
-- **🛡️ Type Safety** - Full TypeScript support with runtime validation
-- **⚡ High Performance** - Intelligent caching and optimized networking
-- **🔄 Auto-Authentication** - Seamless token management and refresh
-- **📦 Modular Design** - Use only what you need
-- **🌍 Cross-Platform** - Node.js, browser, and edge runtime support
+## Capabilities
 
-## 📚 Documentation
+The SDK exposes one client (`SymbiontClient`) with namespaced sub-clients for each runtime feature.
 
-### 🎯 **[Getting Started](./apps/docs/guides/getting-started.md)**
-Complete installation guide, configuration options, and your first agent
+| Sub-client | Surface |
+|------------|---------|
+| `client.agents` | Agent lifecycle (create, update, execute, re-execute, delete, history, heartbeat, push events) |
+| `client.schedules` | Cron schedules with pause/resume/trigger and run history |
+| `client.channels` | Slack/Teams/Mattermost adapters, mappings, audit |
+| `client.workflows` | Multi-agent workflow execution |
+| `client.reasoning` | ORGA loop control, journal, Cedar policies, circuit breakers, knowledge bridge, tool profiles, loop diagnostics |
+| `client.toolclad` | ToolClad manifests — list, validate, test, execute, schema, hot reload |
+| `client.communication` | Communication Policy Gate rules and evaluation |
+| `client.agentpin` | Client-side AgentPin keygen, credential issuance and verification, discovery, key pinning |
+| `client.policies` / `client.policyBuilder` | Policy creation and management |
+| `client.secrets` | Vault, encrypted-file, and OS-keychain secrets |
+| `client.toolReview` | Tool review workflow |
+| `client.mcp` | MCP server connection management |
+| `client.system` | Health, metrics, runtime info |
+| `client.metricsClient` | OTLP / file metrics export, snapshots, periodic collection |
+| `client.http` | Dynamic HTTP endpoint management |
 
-### 📖 **User Guides**
-- **[Agent Management](./apps/docs/guides/agent-management.md)** - Creating, managing, and executing agents
-- **[Tool Review Workflow](./apps/docs/guides/tool-review-workflow.md)** - Security review process for tools and agents
-- **[Policy Creation](./apps/docs/guides/policy-creation.md)** - Building access control and governance policies
-- **[Secrets Management](./apps/docs/guides/secrets-management.md)** - Secure credential and configuration management
+Standalone modules (no client required): `WebhookVerifier` (HMAC, JWT, provider presets), `MarkdownMemoryStore` (file-based agent context), `SkillScanner` / `SkillLoader` (ClawHavoc scanning + skill loading).
 
-### 🔍 **[API Reference](./apps/docs/api/index.html)**
-Complete API documentation with examples and type definitions
+---
 
-### 🏗️ **Architecture**
-- **[Architecture Overview](./ARCHITECTURE.md)** - Technical design and system architecture
-- **[Implementation Guide](./IMPLEMENTATION_GUIDE.md)** - Development roadmap and implementation details
+## Trust Stack integration
 
-## 📦 SDK Packages
+The SDK exposes the runtime features that enforce the Symbiont Trust Stack:
 
-| Package | Purpose | Installation |
-|---------|---------|--------------|
-| **[symbi-core](./packages/core)** | Main client and authentication | `npm install symbi-core` |
-| **[symbi-agent](./packages/agent)** | Agent lifecycle management | `npm install symbi-agent` |
-| **[symbi-policy](./packages/policy)** | Policy creation and validation | `npm install symbi-policy` |
-| **[symbi-secrets](./packages/secrets)** | Secure secrets management | `npm install symbi-secrets` |
-| **[symbi-tool-review](./packages/tool-review)** | Security review workflow | `npm install symbi-tool-review` |
-| **[symbi-mcp](./packages/mcp)** | MCP protocol integration | `npm install symbi-mcp` |
+- **Cedar policies** via `client.reasoning.addCedarPolicy()` and the `policyBuilder` namespace — fine-grained authorization for every agent action
+- **AgentPin** via `client.agentpin.*` — domain-anchored ES256 credential issuance and verification, runs entirely client-side (no runtime required)
+- **ToolClad** via `client.toolclad.*` — declarative tool manifests with argument validation, scope enforcement, and Cedar policy generation; supports `oneshot`, `session`, `browser`, `http`, and `mcp-proxy` backends as of Symbiont v1.10.0
+- **Communication Policy Gate** via `client.communication.*` — Cedar-evaluated allow/deny rules for inter-agent messages
+- **SchemaPin** — enforced server-side; tool signatures are verified before tool execution
 
-## 🔑 AgentPin: Credential Verification
+Model output is never treated as execution authority. The runtime controls what actually happens.
 
-The SDK integrates with [AgentPin](https://github.com/ThirdKeyAI/agentpin) for domain-anchored cryptographic identity verification of AI agents. AgentPin operations run client-side — no Symbiont Runtime required.
+---
 
-### Key Generation & Credential Issuance
+## Packages
+
+The SDK is published as a set of focused packages. Most users only need `symbi-core` (which re-exports types from `symbi-types` and re-exports the agent client).
+
+| Package | Purpose |
+|---------|---------|
+| [`symbi-core`](https://www.npmjs.com/package/symbi-core) | Main client, configuration, auth, webhook verification, skills, metrics, memory |
+| [`symbi-types`](https://www.npmjs.com/package/symbi-types) | Shared TypeScript interfaces and Zod schemas |
+| [`symbi-agent`](https://www.npmjs.com/package/symbi-agent) | Agent, schedule, channel, workflow, AgentPin clients |
+| [`symbi-policy`](https://www.npmjs.com/package/symbi-policy) | Policy builder and enforcement |
+| [`symbi-secrets`](https://www.npmjs.com/package/symbi-secrets) | Vault / file / OS-keychain secrets backends |
+| [`symbi-mcp`](https://www.npmjs.com/package/symbi-mcp) | MCP protocol client |
+| [`symbi-tool-review`](https://www.npmjs.com/package/symbi-tool-review) | Tool review workflow |
+| [`symbi-testing`](https://www.npmjs.com/package/symbi-testing) | Mocks and test helpers |
+| [`symbi-cli`](https://www.npmjs.com/package/symbi-cli) | Command-line tooling |
+| [`symbiont-sdk-js`](https://www.npmjs.com/package/symbiont-sdk-js) | Monorepo source distribution |
+
+---
+
+## Examples
+
+### Reasoning loop
+
+Run an autonomous Observe-Reason-Gate-Act cycle with policy gates, circuit breakers, and journal replay:
+
+```typescript
+const response = await client.reasoning.runLoop('agent-1', {
+  config: { max_iterations: 10, timeout_ms: 60000 },
+  initial_message: 'Analyze the latest sales data and create a report.',
+});
+
+console.log('Output:', response.result.output);
+console.log('Iterations:', response.result.iterations);
+console.log('Termination:', response.result.termination_reason.type);
+
+// Read journal entries for replay/audit
+const journal = await client.reasoning.getJournalEntries('agent-1', { limit: 50 });
+
+// Add an action-level Cedar policy
+await client.reasoning.addCedarPolicy('agent-1', {
+  name: 'deny-file-write',
+  source: 'forbid(principal, action == "tool_call", resource) when { resource.name == "write_file" };',
+  active: true,
+});
+
+// Inspect circuit breaker state and adaptive parameters
+const breakers = await client.reasoning.getCircuitBreakerStatus('agent-1');
+const profiles = await client.reasoning.getToolProfiles('agent-1');
+```
+
+### ToolClad — governed tool execution
+
+Tools are declared in `.clad.toml` manifests with argument validation, scope enforcement, and Cedar policy generation. Drive them from the SDK:
+
+```typescript
+const tools = await client.toolclad.listTools();
+const schema = await client.toolclad.getSchema('nmap');
+
+const result = await client.toolclad.executeTool('nmap', { target: '10.0.0.1' });
+console.log(result.status, result.scanId, result.exitCode);
+
+// Hot reload after editing a manifest on disk
+await client.toolclad.reloadTools();
+```
+
+### Communication Policy Gate
+
+```typescript
+await client.communication.addRule({
+  fromAgent: 'analyst',
+  toAgent: 'reporter',
+  action: 'send_message',
+  effect: 'allow',
+  priority: 10,
+  maxDepth: 3,
+});
+
+const decision = await client.communication.evaluate('analyst', 'reporter', 'send_message');
+console.log(decision.allowed, decision.rule, decision.reason);
+```
+
+### AgentPin — client-side identity
+
+AgentPin operations run client-side; no Symbiont runtime is required.
 
 ```typescript
 const { privateKeyPem, publicKeyPem } = client.agentpin.generateKeyPair();
@@ -132,312 +215,148 @@ const jwt = client.agentpin.issueCredential({
   capabilities: ['read:data', 'write:reports'],
   ttlSecs: 3600,
 });
-```
 
-### Credential Verification
-
-```typescript
-// Online verification (fetches discovery document automatically)
+// Verify (fetches discovery automatically)
 const result = await client.agentpin.verifyCredential(jwt);
 console.log(result.valid, result.agent_id, result.capabilities);
-
-// Offline verification with pre-fetched documents
-const discovery = await client.agentpin.fetchDiscoveryDocument('example.com');
-const offlineResult = client.agentpin.verifyCredentialOffline(jwt, discovery);
-
-// Trust bundle verification (fully offline, no network)
-const bundle = client.agentpin.createTrustBundle();
-const bundleResult = client.agentpin.verifyCredentialWithBundle(jwt, bundle);
 ```
 
-### Discovery & Key Pinning
+### HTTP Input invocation (Symbiont v1.10.0)
+
+The runtime's HTTP Input handler dispatches webhooks to a running agent on the communication bus, or falls back to an on-demand LLM ORGA loop against ToolClad manifests when the agent is not running. The SDK ships typed responses for both shapes:
 
 ```typescript
-// Fetch and validate discovery documents
-const doc = await client.agentpin.fetchDiscoveryDocument('example.com');
-client.agentpin.validateDiscoveryDocument(doc, 'example.com');
+import type {
+  WebhookInvocationRequest,
+  WebhookInvocationResponse,
+  WebhookCompletedResponse,
+  WebhookExecutionStartedResponse,
+} from 'symbi-types';
 
-// TOFU key pinning
-const pinStore = client.agentpin.createPinStore();
-
-// JWK utilities
-const jwk = client.agentpin.pemToJwk(publicKeyPem, kid);
-const pem = client.agentpin.jwkToPem(jwk);
+// Send to your runtime's HTTP Input endpoint, then parse:
+function handle(resp: WebhookInvocationResponse) {
+  if (resp.status === 'execution_started') {
+    console.log('dispatched message', resp.message_id, 'in', resp.latency_ms, 'ms');
+  } else {
+    console.log('LLM completed via', resp.provider, resp.model);
+    for (const run of resp.tool_runs) {
+      console.log(' -', run.tool, run.output_preview);
+    }
+  }
+}
 ```
 
-## 🛠️ Configuration
-
-### Environment Variables
-```bash
-# Required
-SYMBIONT_API_KEY=your_api_key_here
-
-# Optional
-SYMBIONT_API_URL=https://api.symbiont.dev
-SYMBIONT_ENVIRONMENT=production
-```
-
-### Client Configuration
-```typescript
-const client = new SymbiontClient({
-  apiKey: process.env.SYMBIONT_API_KEY,
-  environment: 'production',
-  validationMode: 'strict',
-  timeout: 30000,
-  debug: false
-});
-```
-
-## 🎯 Common Use Cases
-
-### Agent Creation and Execution
-```typescript
-// Create a data analysis agent
-const agent = await client.agents.createAgent({
-  name: 'dataAnalyzer',
-  description: 'Analyzes datasets and generates insights',
-  parameters: [
-    { name: 'dataset', type: { name: 'object' }, required: true },
-    { name: 'analysisType', type: { name: 'string' }, required: false }
-  ],
-  capabilities: ['data_processing', 'visualization'],
-  policies: [dataAccessPolicy]
-});
-
-const insights = await client.agents.executeAgent(agent.id, {
-  dataset: myData,
-  analysisType: 'trend_analysis'
-});
-```
-
-### Policy Management
-```typescript
-import { PolicyBuilder } from 'symbi-policy';
-
-// Create access control policy
-const policy = new PolicyBuilder('dataAccessPolicy')
-  .allow('read', 'analyze')
-    .where('user.department', 'equals', 'analytics')
-    .where('data.classification', 'not-equals', 'restricted')
-  .require('approval')
-    .where('action', 'equals', 'export')
-  .build();
-```
-
-### Secrets Management
-```typescript
-import { SecretManager } from 'symbi-secrets';
-
-const secrets = new SecretManager({
-  providers: [
-    { name: 'environment', priority: 100 },
-    { name: 'vault', priority: 200, endpoint: 'https://vault.company.com' }
-  ]
-});
-
-const apiKey = await secrets.getSecret('EXTERNAL_API_KEY');
-```
-
-## Webhook Verification
-
-Verify inbound webhook signatures from GitHub, Stripe, Slack, or custom providers:
+### Webhook signature verification
 
 ```typescript
-import {
-    HmacVerifier, JwtVerifier, createProviderVerifier,
-} from 'symbi-core';
+import { HmacVerifier, JwtVerifier, createProviderVerifier } from 'symbi-core';
 
-// Use a provider preset
+// Provider preset (GitHub, Stripe, Slack, custom)
 const verifier = createProviderVerifier('GITHUB', Buffer.from(secret));
 verifier.verify(request.headers, Buffer.from(request.body));
 
 // Manual HMAC with prefix stripping
-const hmac = new HmacVerifier(
-    Buffer.from(secret), 'X-Hub-Signature-256', 'sha256='
-);
+const hmac = new HmacVerifier(Buffer.from(secret), 'X-Hub-Signature-256', 'sha256=');
 hmac.verify(headers, body);
-
-// JWT-based verification
-const jwtVerifier = new JwtVerifier(
-    Buffer.from(secret), 'Authorization', 'expected-issuer'
-);
-jwtVerifier.verify(headers, body);
 ```
 
-Provider presets: `GITHUB`, `STRIPE`, `SLACK`, `CUSTOM`.
-
-## Markdown Memory Persistence
-
-File-based agent context that survives restarts:
+### Markdown memory persistence
 
 ```typescript
 import { MarkdownMemoryStore } from 'symbi-core';
 
 const store = new MarkdownMemoryStore('/data/memory', 30);
-
 await store.saveContext('agent-1', {
-    agentId: 'agent-1',
-    facts: ['User prefers dark mode', 'Timezone is UTC-5'],
-    procedures: ['Always greet by name'],
-    learnedPatterns: ['Responds better to bullet points'],
-    metadata: { lastSession: '2026-02-15' },
+  agentId: 'agent-1',
+  facts: ['User prefers dark mode'],
+  procedures: ['Always greet by name'],
+  learnedPatterns: ['Responds better to bullet points'],
+  metadata: { lastSession: '2026-02-15' },
 });
-
 const context = await store.loadContext('agent-1');
-const agents = await store.listAgentContexts();
-await store.compact('agent-1');
-const stats = await store.getStorageStats();
 ```
 
-## Agent Skills (ClawHavoc Scanning)
-
-Scan and load agent skill definitions with security scanning:
+### Agent skills — ClawHavoc scanning
 
 ```typescript
 import { SkillScanner, SkillLoader } from 'symbi-core';
 
-// Scan for security issues (10 built-in ClawHavoc rules)
+// 10 built-in ClawHavoc rules (pipe-to-shell, eval+fetch, base64-decode-exec, etc.)
 const scanner = new SkillScanner();
 const findings = scanner.scanContent(content, 'SKILL.md');
 
-// Scan an entire skill directory
-const result = scanner.scanSkill('/path/to/skill');
-
-// Load skills from paths
 const loader = new SkillLoader({
-    loadPaths: ['/skills/verified', '/skills/community'],
-    requireSigned: false,
-    scanEnabled: true,
+  loadPaths: ['/skills/verified', '/skills/community'],
+  requireSigned: false,
+  scanEnabled: true,
 });
-
-const skills = loader.loadAll();
-const skill = loader.loadSkill('/path/to/skill');
+const skills = await loader.loadAll();
 ```
 
-Detects: pipe-to-shell, wget-pipe-to-shell, env file references, SOUL.md/memory.md tampering, eval+fetch, base64-decode-exec, rm-rf, chmod-777.
+---
 
-## Metrics Collection & Export
+## Configuration
 
-Runtime metrics retrieval and local export:
+### Environment
+
+```bash
+SYMBIONT_API_KEY=...                       # required
+SYMBIONT_API_URL=http://localhost:8080/api/v1
+SYMBIONT_ENVIRONMENT=production
+```
+
+### Programmatic
 
 ```typescript
-import {
-    FileMetricsExporter, CompositeExporter, MetricsCollector,
-} from 'symbi-core';
-
-// Fetch from runtime API
-const snapshot = await client.metricsClient.getSnapshot();
-const scheduler = await client.metricsClient.getSchedulerMetrics();
-const system = await client.metricsClient.getSystemMetrics();
-
-// Export to file (atomic JSON write)
-const exporter = new FileMetricsExporter({ filePath: '/tmp/metrics.json' });
-await exporter.export(snapshot);
-
-// Fan-out to multiple backends
-const composite = new CompositeExporter([exporter, otherExporter]);
-
-// Background collection
-const collector = new MetricsCollector(composite, 60000);
-collector.start(fetchFn);
-collector.stop();
+const client = new SymbiontClient({
+  apiKey: process.env.SYMBIONT_API_KEY,
+  apiUrl: process.env.SYMBIONT_API_URL,
+  environment: 'production',
+  validationMode: 'strict',
+  timeout: 30000,
+});
 ```
 
-## Scheduling
+See the [API reference](https://docs.symbiont.dev/api-reference) for the full configuration surface.
 
-```typescript
-const schedule = await client.schedules.create({
-    agentId: 'my-agent',
-    cron: '0 */6 * * *',
-    parameters: { task: 'cleanup' },
-});
+---
 
-const schedules = await client.schedules.list();
-const health = await client.schedules.getSchedulerHealth();
-```
+## Documentation
 
-## Reasoning Loop (v1.6.0)
+- [Getting started](https://docs.symbiont.dev/getting-started)
+- [Security model](https://docs.symbiont.dev/security-model)
+- [Runtime architecture](https://docs.symbiont.dev/runtime-architecture)
+- [Reasoning loop guide](https://docs.symbiont.dev/reasoning-loop)
+- [DSL guide](https://docs.symbiont.dev/dsl-guide)
+- [API reference](https://docs.symbiont.dev/api-reference)
 
-Run autonomous reasoning loops with policy gates, circuit breakers, and knowledge recall:
+The Symbiont runtime itself lives at [thirdkeyai/symbiont](https://github.com/thirdkeyai/symbiont).
 
-```typescript
-import { SymbiontClient } from 'symbi-core';
+---
 
-const client = new SymbiontClient({ apiKey: process.env.SYMBIONT_API_KEY });
+## What's new
 
-// Run a reasoning loop
-const response = await client.reasoning.runLoop('agent-1', {
-  config: { max_iterations: 10, timeout_ms: 60000 },
-  initial_message: 'Analyze the latest sales data and create a report.',
-});
+### v1.10.1 — packaging
+Workspace packages renamed from the previously-unpublished `@symbi/*` scope to unscoped `symbi-*` names so they can actually be installed from npm. Packaging-only release; no API changes.
 
-console.log('Output:', response.result.output);
-console.log('Iterations:', response.result.iterations);
-console.log('Termination:', response.result.termination_reason.type);
+### v1.10.0 — HTTP Input LLM invocation
+- `WebhookInvocationResponse` discriminated union covering both `execution_started` (runtime communication-bus dispatch) and `completed` (on-demand LLM ORGA loop) shapes from the Symbiont v1.10.0 HTTP Input handler
+- `WebhookToolRun`, `WebhookInvocationRequest`, `WebhookInvocationStatus` with Zod schemas
+- ToolClad v0.4.0 backend strings (`http`, `mcp`, `session`, `browser`) accepted on `ToolManifestInfo.backend`
+- All packages aligned to Symbiont runtime v1.10.0
 
-// Check loop status
-const status = await client.reasoning.getLoopStatus('agent-1', response.loop_id);
+See [`CHANGELOG.md`](./CHANGELOG.md) for the full history.
 
-// Read journal entries
-const journal = await client.reasoning.getJournalEntries('agent-1', { limit: 50 });
-
-// Cedar policy management
-await client.reasoning.addCedarPolicy('agent-1', {
-  name: 'deny-file-write',
-  source: 'forbid(principal, action == "tool_call", resource) when { resource.name == "write_file" };',
-  active: true,
-});
-const policies = await client.reasoning.listCedarPolicies('agent-1');
-
-// Circuit breaker status
-const breakers = await client.reasoning.getCircuitBreakerStatus('agent-1');
-
-// Knowledge bridge
-await client.reasoning.storeKnowledge('agent-1', 'sales', 'grew_by', '15%');
-const facts = await client.reasoning.recallKnowledge('agent-1', 'sales growth');
-```
-
-## What's New in v1.10.0
-
-- **HTTP Input LLM invocation types** — `WebhookInvocationResponse` discriminated
-  union covering both `execution_started` (runtime dispatch) and `completed`
-  (on-demand LLM ORGA loop) response shapes returned by Symbiont's HTTP Input
-  handler, plus `WebhookToolRun` and `WebhookInvocationRequest` types with
-  Zod schemas.
-- **Alignment with Symbiont runtime v1.10.0** — all package versions bumped to
-  1.10.0. ToolClad v0.4.0 additions in the runtime (session / browser modes,
-  HTTP and MCP proxy backends, output parsers, custom types, secrets
-  injection, W3C `traceparent` propagation) are transparent to existing SDK
-  type shapes; the `backend` string on `ToolManifestInfo` now accepts
-  `"http"`, `"mcp"`, `"session"`, and `"browser"` in addition to the
-  previously documented values.
-
-### Previous Releases
-
-#### v1.8.1
-
-- **CommunicationPolicyGate Client** — `listRules()`, `addRule()`, `removeRule()`, `evaluate()` for inter-agent message governance
-- **ToolCladClient** — `listTools()`, `validateManifest()`, `testTool()`, `getSchema()`, `executeTool()`, `getToolInfo()`, `reloadTools()`
-- **Agent lifecycle** — `AgentClient.reExecuteAgent()` for re-running completed agents
-- **ORGA-adaptive features** — `ReasoningClient.getToolProfiles()`, `getLoopDiagnostics()`
-
-#### v1.6.0
-
-- **Reasoning Loop** — `client.reasoning.runLoop()`, `getLoopStatus()`, `cancelLoop()` for autonomous ORGA cycles
-- **Journal System** — `getJournalEntries()`, `compactJournal()` for loop event replay and auditing
-- **Cedar Policies** — `listCedarPolicies()`, `addCedarPolicy()`, `evaluateCedarPolicy()` for action-level governance
-- **Circuit Breakers** — `getCircuitBreakerStatus()`, `resetCircuitBreaker()` for tool failure isolation
-- **Knowledge Bridge** — `recallKnowledge()`, `storeKnowledge()` for persistent agent memory
-- **Type Definitions** — Zod schemas for all reasoning types in `symbi-types`
-
-#### v0.6.0
-
-- **Webhook Verification** — `HmacVerifier`, `JwtVerifier`, provider presets (GitHub, Stripe, Slack)
-- **Markdown Memory** — `MarkdownMemoryStore` for file-based agent context persistence
-- **Agent Skills** — `SkillScanner` with 10 ClawHavoc rules, `SkillLoader` with frontmatter parsing
-- **Metrics** — `MetricsApiClient` sub-client, `FileMetricsExporter`, `CompositeExporter`, `MetricsCollector`
-- **Type Definitions** — Zod schemas for webhooks, skills, and metrics in `symbi-types`
+---
 
 ## License
 
-Apache License 2.0
+Apache 2.0. See [`LICENSE`](./LICENSE).
+
+The SDK is part of the Symbiont project's Community Edition. For Enterprise licensing of the Symbiont runtime (advanced sandbox backends, compliance audit exports, AI-powered tool review, encrypted multi-agent collaboration, monitoring dashboards, dedicated support), contact [ThirdKey](https://thirdkey.ai).
+
+---
+
+<div align="right">
+  <img src="https://raw.githubusercontent.com/ThirdKeyAI/Symbiont/main/symbi-trans.png" alt="Symbi" width="120">
+</div>
