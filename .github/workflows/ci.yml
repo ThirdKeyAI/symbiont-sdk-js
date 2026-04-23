@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["18.x", "20.x", "22.x"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build all workspace packages
+        run: npm run build --workspaces
+
+      - name: Type-check workspace
+        run: npm run type-check
+
+      - name: Lint (non-blocking; pre-existing findings being cleaned up incrementally)
+        run: npm run lint --workspaces --if-present
+        continue-on-error: true
+
+      - name: Run tests
+        run: npx vitest run
+
+  build-artifact:
+    name: pack tarballs
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build all workspace packages
+        run: npm run build --workspaces
+
+      - name: Pack each workspace package
+        run: |
+          mkdir -p artifacts
+          for pkg in packages/*/; do
+            (cd "$pkg" && npm pack --pack-destination ../../artifacts)
+          done
+          npm pack --pack-destination ./artifacts
+
+      - name: Upload tarball artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tarballs
+          path: artifacts/
+          retention-days: 14

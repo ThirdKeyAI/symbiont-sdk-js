@@ -66,7 +66,6 @@ function getAgentPin(): any {
  * ```
  */
 export class AgentPinClient {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private client: any;
 
   constructor(client: any) {

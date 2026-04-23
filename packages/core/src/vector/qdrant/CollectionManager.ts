@@ -28,7 +28,7 @@ export class CollectionManager {
         write_consistency_factor: request.write_consistency_factor,
         on_disk_payload: request.on_disk_payload,
         hnsw_config: request.hnsw_config,
-        optimizer_config: request.optimizer_config,
+        optimizers_config: request.optimizer_config,
         wal_config: request.wal_config,
       });
       return true;
@@ -64,16 +64,41 @@ export class CollectionManager {
   async getInfo(collectionName: string): Promise<CollectionInfo> {
     try {
       const response = await this.client.getCollection(collectionName);
+
+      // Narrow qdrant-js response types to our stricter CollectionInfo schema:
+      // - response.status can be "grey" (initializing); surface as "red"
+      // - response.optimizer_status can be { error } object; surface as "error"
+      // - response has no "name" field; use the caller-supplied collectionName
+      const status =
+        response.status === 'grey' ? 'red' : response.status;
+      const optimizer_status =
+        typeof response.optimizer_status === 'object' ? 'error' : response.optimizer_status;
+
+      const params = response.config?.params;
+      const vectors = params?.vectors;
+      const vectorConfig =
+        vectors && typeof vectors === 'object' && 'size' in vectors && 'distance' in vectors
+          ? { size: vectors.size as number, distance: vectors.distance as 'Cosine' | 'Dot' | 'Euclid' | 'Manhattan' }
+          : { size: 0, distance: 'Cosine' as const };
+
       return {
-        name: response.name,
-        status: response.status,
-        optimizer_status: response.optimizer_status,
+        name: collectionName,
+        status,
+        optimizer_status,
         vectors_count: response.vectors_count || 0,
         indexed_vectors_count: response.indexed_vectors_count || 0,
         points_count: response.points_count || 0,
         segments_count: response.segments_count || 0,
-        config: response.config,
-        payload_schema: response.payload_schema,
+        config: {
+          params: {
+            vectors: vectorConfig,
+            shard_number: (params?.shard_number as number) ?? 1,
+            replication_factor: (params?.replication_factor as number) ?? 1,
+            write_consistency_factor: (params?.write_consistency_factor as number) ?? 1,
+            on_disk_payload: (params?.on_disk_payload as boolean) ?? false,
+          },
+        },
+        payload_schema: response.payload_schema as Record<string, unknown> | undefined,
       };
     } catch (error) {
       const errorMessage = this.handleError(error);
@@ -133,7 +158,9 @@ export class CollectionManager {
    */
   async createAlias(aliasName: string, collectionName: string): Promise<boolean> {
     try {
-      await this.client.createAlias(aliasName, collectionName);
+      await this.client.updateCollectionAliases({
+        actions: [{ create_alias: { alias_name: aliasName, collection_name: collectionName } }],
+      });
       return true;
     } catch (error) {
       const errorMessage = this.handleError(error);
@@ -147,7 +174,9 @@ export class CollectionManager {
    */
   async deleteAlias(aliasName: string): Promise<boolean> {
     try {
-      await this.client.deleteAlias(aliasName);
+      await this.client.updateCollectionAliases({
+        actions: [{ delete_alias: { alias_name: aliasName } }],
+      });
       return true;
     } catch (error) {
       const errorMessage = this.handleError(error);

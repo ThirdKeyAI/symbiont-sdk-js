@@ -208,7 +208,7 @@ export class SkillLoader {
       (pattern, i) => ({
         name: `custom-deny-${i}`,
         pattern,
-        severity: ScanSeverityType.CRITICAL as const,
+        severity: ScanSeverityType.CRITICAL,
         message: `Custom deny pattern matched: ${pattern}`,
       })
     );

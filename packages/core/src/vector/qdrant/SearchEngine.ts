@@ -70,8 +70,21 @@ export class SearchEngine {
         params: options?.params,
       };
 
+      // Retrieve the source point's vector, then do a normal vector search.
+      // The qdrant-js search endpoint no longer accepts { id } as a vector
+      // reference; recommendPoints is available but has different semantics.
+      const sourcePoints = await this.client.retrieve(collectionName, {
+        ids: [pointId],
+        with_vector: true,
+        with_payload: false,
+      });
+      const sourceVector = sourcePoints[0]?.vector;
+      if (!sourceVector || typeof sourceVector !== 'object' || Array.isArray(sourceVector) === false) {
+        throw new Error(`Point ${pointId} not found or has no retrievable vector`);
+      }
+
       const result = await this.client.search(collectionName, {
-        vector: { id: pointId },
+        vector: sourceVector as number[],
         ...searchOptions,
       });
 
@@ -219,17 +232,11 @@ export class SearchEngine {
         params: options?.params,
       };
 
-      const positiveVectors = positive.map(item => 
-        typeof item === 'string' ? { id: item } : item
-      );
-      
-      const negativeVectors = negative.map(item => 
-        typeof item === 'string' ? { id: item } : item
-      );
-
+      // qdrant-js accepts IDs directly (string | number) or raw vectors — not
+      // wrapped in { id } objects — in recommend positive/negative arrays.
       const result = await this.client.recommend(collectionName, {
-        positive: positiveVectors,
-        negative: negativeVectors,
+        positive,
+        negative,
         ...searchOptions,
       });
 
@@ -268,22 +275,21 @@ export class SearchEngine {
         params: options?.params,
       };
 
-      const targetVector = typeof target === 'string' ? { id: target } : target;
-      
-      const contextPairs = context.map(ctx => ({
-        positive: ctx.positive?.map(item => 
-          typeof item === 'string' ? { id: item } : item
-        ) || [],
-        negative: ctx.negative?.map(item => 
-          typeof item === 'string' ? { id: item } : item
-        ) || [],
-      }));
+      // qdrant-js renamed `discover` → `discoverPoints` and accepts
+      // IDs directly (string | number) instead of `{ id }` wrappers.
+      // discoverPoints takes flat positive/negative arrays; flatten the
+      // caller-supplied context pairs accordingly.
+      const flatPositive = context.flatMap(ctx => ctx.positive ?? []);
+      const flatNegative = context.flatMap(ctx => ctx.negative ?? []);
 
-      const result = await this.client.discover(collectionName, {
-        target: targetVector,
-        context: contextPairs,
+      const result = await this.client.discoverPoints(collectionName, {
+        target,
+        context: flatPositive.map((p, i) => ({
+          positive: p,
+          negative: flatNegative[i],
+        })),
         ...searchOptions,
-      });
+      } as any);
 
       return result.map((point: any) => ({
         id: point.id as string,
