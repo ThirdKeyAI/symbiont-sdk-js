@@ -60,11 +60,17 @@ describe('InMemoryStore', () => {
 
       await store.store(memory);
       const retrieved = await store.get('test-1');
-      
-      expect(retrieved).toEqual({
+
+      // `get()` calls `recordAccess()`, which bumps accessCount AND refreshes
+      // the timestamp — assert the stable fields and verify timestamp is
+      // at or after the stored time, rather than deep-equal on the whole
+      // object (which used to flake when retrieval landed in the same ms).
+      expect(retrieved).toMatchObject({
         ...memory,
-        accessCount: 1, // Access count should be incremented on retrieval
+        accessCount: 1,
+        timestamp: expect.any(Date),
       });
+      expect(retrieved!.timestamp.getTime()).toBeGreaterThanOrEqual(memory.timestamp.getTime());
     });
 
     it('should create copy of stored memory', async () => {
