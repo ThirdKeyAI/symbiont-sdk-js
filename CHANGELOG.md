@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2026-04-24
+
+Tracks Symbiont runtime v1.11.0.
+
+### Changed
+
+- **Version bump** to track the Symbiont runtime v1.11.0 release, which
+  introduces the `symbi shell` (Beta) interactive TUI, `symbi repl` shim
+  subcommand, `symbi init` Docker ergonomics (`--dir`, docker-compose
+  generator, auto-generated `SYMBIONT_MASTER_KEY`), cross-instance agent
+  messaging, `symbi-approval-relay` crate, and the `symbi schemapin` /
+  `symbi policy` CLI subcommands. The SDK's HTTP surface is
+  backward-compatible with v1.10.x; no client code changes required.
+- **Node.js ≥ 20 required**: Dropped Node 18 from the CI matrix and
+  tightened `engines.node` to `>=20`. Node 18 reached end-of-life and
+  was blocking CI progress.
+
+### Fixed
+
+- `InMemoryStore`: stopped asserting deep-equality on timestamps in a
+  flaky test.
+- TypeScript errors and ESLint `no-redeclare` findings cleaned up;
+  added a reusable CI workflow for type-check + lint on PRs.
+
+### Docs
+
+- New per-package READMEs for every `symbi-*` workspace package.
+- Top-level README rewritten to align with the Symbiont main repo and
+  `symbiont.dev` voice.
+
+### Internal
+
+- Renamed `rollup.config.js` → `rollup.config.mjs` for Node 18+
+  ESM-config compatibility.
+
 ## [1.10.1] - 2026-04-22
 
 ### Changed — Package rename
