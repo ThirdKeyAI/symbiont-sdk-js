@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0] - 2026-05-07
+
+Tracks Symbiont runtime v1.13.0.
+
+### Added
+
+- **`.symbi` agent file extension** in the `symbi agent create` CLI: `.symbi` is the canonical extension as of Symbiont runtime v1.12.0; the CLI now accepts `.symbi` alongside `.json` and the legacy `.dsl`. Existing `.dsl` workflows continue to work indefinitely.
+
+### Changed
+
+- **Version bump** to track the Symbiont runtime v1.13.0 release. Notable runtime changes the SDK is forward-compatible with (no client code changes required — the HTTP surface is unchanged): `symbi fmt` subcommand for canonical `.symbi` formatting; tree-sitter grammar v2 covering the full DSL surface; LLM API keys via `SecretStore` (`OPENROUTER_API_KEY_REF`, `OPENAI_API_KEY_REF`, `ANTHROPIC_API_KEY_REF`); `SecurityTier::Hosted` variant for E2B; ToolClad `agent_summary` typestate fence; `symbi-invis-strip` 0.2.0 with expanded INJECTION_MARKERS; slack signature timestamp overflow fix.
+- The Symbiont editor stack also went standalone in this cycle: [`tree-sitter-symbiont`](https://github.com/ThirdKeyAI/tree-sitter-symbiont) v0.1.0 on npm and crates.io; [`vscode-symbiont`](https://github.com/ThirdKeyAI/vscode-symbiont) v0.1.0 with a TextMate grammar.
+
 ## [1.11.0] - 2026-04-24
 
 Tracks Symbiont runtime v1.11.0.

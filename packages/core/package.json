@@ -1,6 +1,6 @@
 {
   "name": "symbi-core",
-  "version": "1.11.0",
+  "version": "1.13.0",
   "description": "Core Symbiont SDK functionality and SymbiontClient",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

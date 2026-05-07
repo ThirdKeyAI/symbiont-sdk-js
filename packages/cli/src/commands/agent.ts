@@ -13,7 +13,7 @@ export function setupAgentCommands(program: Command): void {
   agent
     .command('create')
     .description('Create a new agent')
-    .argument('<file>', 'Agent definition file (.json or .dsl)')
+    .argument('<file>', 'Agent definition file (.json, .symbi, or legacy .dsl)')
     .option('-n, --name <name>', 'Override agent name')
     .option('-d, --description <desc>', 'Override agent description')
     .option('--dry-run', 'Validate without creating')
@@ -88,16 +88,17 @@ async function handleAgentCreate(file: string, options: any): Promise<void> {
     
     if (file.endsWith('.json')) {
       agentDefinition = JSON.parse(content);
-    } else if (file.endsWith('.dsl')) {
-      // For DSL files, we would need to parse the DSL
-      // For now, treat as plain text source
+    } else if (file.endsWith('.symbi') || file.endsWith('.dsl')) {
+      // .symbi is the canonical extension as of symbiont 1.12.0; .dsl is
+      // accepted indefinitely for backward compatibility. Treat the source
+      // as DSL plain text — the runtime parses it.
       agentDefinition = {
         name: options.name || 'unnamed-agent',
         description: options.description || 'Agent created from DSL',
         dslSource: content
       };
     } else {
-      throw new ValidationError('Agent definition must be a .json or .dsl file');
+      throw new ValidationError('Agent definition must be a .json, .symbi, or legacy .dsl file');
     }
   } catch (error) {
     throw new ValidationError(`Failed to parse agent definition: ${error instanceof Error ? error.message : 'Unknown error'}`);

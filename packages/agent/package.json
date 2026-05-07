@@ -1,6 +1,6 @@
 {
   "name": "symbi-agent",
-  "version": "1.11.0",
+  "version": "1.13.0",
   "description": "Agent management and execution for Symbiont SDK",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

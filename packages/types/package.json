@@ -1,6 +1,6 @@
 {
   "name": "symbi-types",
-  "version": "1.11.0",
+  "version": "1.13.0",
   "description": "Shared TypeScript interfaces and Zod schemas for Symbiont SDK",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
