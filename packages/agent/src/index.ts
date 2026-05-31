@@ -4,6 +4,19 @@
 
 // Export the main AgentClient
 export { AgentClient } from './AgentClient';
+export type {
+  SendMessageRequest,
+  SendMessageResponse,
+  ReceiveMessagesResponse,
+  MessageStatusResponse,
+  AgentLifecycleState,
+  HeartbeatRequest,
+  AgentEventType,
+  PushEventRequest,
+} from './AgentClient';
+
+// Export URL helper for runtime clients
+export { buildRuntimeUrl } from './urlUtils';
 
 // Export the ScheduleClient
 export { ScheduleClient } from './ScheduleClient';

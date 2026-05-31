@@ -2,8 +2,6 @@ import { SymbiontConfig, EnhancedSymbiontConfig, HealthStatus, HealthResponse } 
 import { AuthenticationManager } from './auth';
 import { EnvManager } from './config';
 import { SystemClient } from './SystemClient';
-import { CommunicationClient } from './CommunicationClient';
-import { ToolCladClient } from './ToolCladClient';
 
 /**
  * Main Symbiont SDK client providing unified access to both Runtime and Tool Review APIs
@@ -26,9 +24,6 @@ export class SymbiontClient {
   private _http?: any; // HttpEndpointManager
   private _agentpin?: any; // AgentPinClient
   private _metricsClient?: any; // MetricsApiClient
-  private _reasoning?: any; // ReasoningClient
-  private _communication?: CommunicationClient;
-  private _toolclad?: ToolCladClient;
 
   /**
    * Create a new Symbiont SDK client
@@ -298,37 +293,6 @@ export class SymbiontClient {
       this._agentpin = new AgentPinClient(this);
     }
     return this._agentpin;
-  }
-
-  /**
-   * Lazy-loaded reasoning client for loop, journal, Cedar, circuit breaker, and knowledge operations
-   */
-  get reasoning(): any {
-    if (!this._reasoning) {
-      const { ReasoningClient } = require('./ReasoningClient');
-      this._reasoning = new ReasoningClient(this);
-    }
-    return this._reasoning;
-  }
-
-  /**
-   * Lazy-loaded communication policy gate client
-   */
-  get communication(): CommunicationClient {
-    if (!this._communication) {
-      this._communication = new CommunicationClient(this);
-    }
-    return this._communication;
-  }
-
-  /**
-   * Lazy-loaded ToolClad client for tool manifest management and execution
-   */
-  get toolclad(): ToolCladClient {
-    if (!this._toolclad) {
-      this._toolclad = new ToolCladClient(this);
-    }
-    return this._toolclad;
   }
 
   /**
