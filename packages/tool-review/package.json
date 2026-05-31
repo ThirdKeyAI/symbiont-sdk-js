@@ -2,6 +2,7 @@
   "name": "symbi-tool-review",
   "version": "1.13.0",
   "description": "Tool Review API client for Symbiont SDK",
+  "deprecated": "Targets the hosted Symbiont Tool Review API, which is not part of the open-source Symbiont runtime. Unmaintained for OSS use as of 1.14.3.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",

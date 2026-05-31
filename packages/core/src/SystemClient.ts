@@ -3,6 +3,7 @@ import {
   SymbiontConfig,
   HealthResponse,
 } from 'symbi-types';
+import { buildRuntimeUrl } from './urlUtils';
 
 /**
  * Simple interface to avoid circular dependency with SymbiontClient
@@ -53,7 +54,7 @@ export class SystemClient {
       const authHeaders = await this.client.getAuthHeaders(endpoint);
       const config = this.client.configuration;
       const baseUrl = config.runtimeApiUrl;
-      const fullUrl = `${baseUrl}${endpoint}`;
+      const fullUrl = buildRuntimeUrl(baseUrl, endpoint);
 
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',

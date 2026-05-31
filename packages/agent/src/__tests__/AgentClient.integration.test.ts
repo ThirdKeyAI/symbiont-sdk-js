@@ -295,4 +295,217 @@ describe('AgentClient Integration Tests', () => {
       );
     });
   });
+
+  describe('/api/v1 normalization', () => {
+    it('prefixes exactly one /api/v1 onto the request URL', async () => {
+      const mocks = testEnv.getMocks();
+      mocks.fetch.mockResponse('/agents', {
+        status: 200,
+        body: [],
+      });
+
+      await agentClient.listAgents();
+
+      const calls = mocks.fetch.getCallsFor('/agents');
+      expect(calls).toHaveLength(1);
+      const url = calls[0].url;
+      expect(url).toBe('http://localhost:8080/api/v1/agents');
+      expect(url.match(/\/api\/v1/g)).toHaveLength(1);
+    });
+
+    it('executeAgent targets /api/v1/agents/{id}/execute', async () => {
+      const mocks = testEnv.getMocks();
+      const id = 'agent-xyz';
+      mocks.fetch.mockResponse(`/agents/${id}/execute`, {
+        status: 200,
+        body: { ok: true },
+      });
+
+      await agentClient.executeAgent(id, { foo: 'bar' });
+
+      const calls = mocks.fetch.getCallsFor(`/agents/${id}/execute`);
+      expect(calls).toHaveLength(1);
+      expect(calls[0].url).toBe(
+        `http://localhost:8080/api/v1/agents/${id}/execute`
+      );
+    });
+  });
+
+  describe('sendMessage', () => {
+    const agentId = 'test-agent-id';
+
+    it('POSTs to /agents/{id}/messages with snake_case body', async () => {
+      const mocks = testEnv.getMocks();
+      mocks.fetch.mockResponse(`/agents/${agentId}/messages`, {
+        status: 200,
+        body: { message_id: 'm-1', status: 'queued' },
+      });
+
+      const result = await agentClient.sendMessage(agentId, {
+        sender: 'agent-a',
+        payload: { hello: 'world' },
+        ttlSeconds: 60,
+        topic: 'greeting',
+        agentpinJwt: 'jwt-token',
+      });
+
+      expect(result).toEqual({ message_id: 'm-1', status: 'queued' });
+
+      const calls = mocks.fetch.getCallsFor(`/agents/${agentId}/messages`);
+      expect(calls).toHaveLength(1);
+      expect(calls[0].method).toBe('POST');
+      expect(calls[0].url).toBe(
+        `http://localhost:8080/api/v1/agents/${agentId}/messages`
+      );
+      expect(JSON.parse(calls[0].body!)).toEqual({
+        sender: 'agent-a',
+        payload: { hello: 'world' },
+        ttl_seconds: 60,
+        topic: 'greeting',
+        agentpin_jwt: 'jwt-token',
+      });
+    });
+
+    it('omits undefined optional fields', async () => {
+      const mocks = testEnv.getMocks();
+      mocks.fetch.mockResponse(`/agents/${agentId}/messages`, {
+        status: 200,
+        body: { message_id: 'm-2', status: 'queued' },
+      });
+
+      await agentClient.sendMessage(agentId, {
+        sender: 'agent-a',
+        payload: 'plain',
+      });
+
+      const calls = mocks.fetch.getCallsFor(`/agents/${agentId}/messages`);
+      expect(JSON.parse(calls[0].body!)).toEqual({
+        sender: 'agent-a',
+        payload: 'plain',
+      });
+    });
+
+    it('throws for empty agent ID', async () => {
+      await expect(
+        agentClient.sendMessage('', { sender: 's', payload: 'p' })
+      ).rejects.toThrow('Agent ID is required');
+    });
+  });
+
+  describe('receiveMessages', () => {
+    const agentId = 'test-agent-id';
+
+    it('GETs /agents/{id}/messages', async () => {
+      const mocks = testEnv.getMocks();
+      mocks.fetch.mockResponse(`/agents/${agentId}/messages`, {
+        status: 200,
+        body: { messages: [{ id: 'm-1' }] },
+      });
+
+      const result = await agentClient.receiveMessages(agentId);
+
+      expect(result).toEqual({ messages: [{ id: 'm-1' }] });
+      const calls = mocks.fetch.getCallsFor(`/agents/${agentId}/messages`);
+      expect(calls[0].method).toBe('GET');
+    });
+
+    it('throws for empty agent ID', async () => {
+      await expect(agentClient.receiveMessages('')).rejects.toThrow(
+        'Agent ID is required'
+      );
+    });
+  });
+
+  describe('getMessageStatus', () => {
+    const messageId = 'msg-123';
+
+    it('GETs /messages/{id}/status', async () => {
+      const mocks = testEnv.getMocks();
+      mocks.fetch.mockResponse(`/messages/${messageId}/status`, {
+        status: 200,
+        body: { message_id: messageId, status: 'delivered' },
+      });
+
+      const result = await agentClient.getMessageStatus(messageId);
+
+      expect(result).toEqual({ message_id: messageId, status: 'delivered' });
+      const calls = mocks.fetch.getCallsFor(`/messages/${messageId}/status`);
+      expect(calls[0].method).toBe('GET');
+      expect(calls[0].url).toBe(
+        `http://localhost:8080/api/v1/messages/${messageId}/status`
+      );
+    });
+
+    it('throws for empty message ID', async () => {
+      await expect(agentClient.getMessageStatus('')).rejects.toThrow(
+        'Message ID is required'
+      );
+    });
+  });
+
+  describe('sendHeartbeat', () => {
+    const agentId = 'test-agent-id';
+
+    it('POSTs to /agents/{id}/heartbeat with snake_case body', async () => {
+      const mocks = testEnv.getMocks();
+      mocks.fetch.mockResponse(`/agents/${agentId}/heartbeat`, {
+        status: 204,
+        body: '',
+      });
+
+      await agentClient.sendHeartbeat(agentId, {
+        state: 'Running',
+        metadata: { step: 1 },
+        lastResult: { ok: true },
+        agentpinJwt: 'jwt',
+      });
+
+      const calls = mocks.fetch.getCallsFor(`/agents/${agentId}/heartbeat`);
+      expect(calls[0].method).toBe('POST');
+      expect(JSON.parse(calls[0].body!)).toEqual({
+        state: 'Running',
+        metadata: { step: 1 },
+        last_result: { ok: true },
+        agentpin_jwt: 'jwt',
+      });
+    });
+
+    it('throws for empty agent ID', async () => {
+      await expect(
+        agentClient.sendHeartbeat('', { state: 'Running' })
+      ).rejects.toThrow('Agent ID is required');
+    });
+  });
+
+  describe('pushEvent', () => {
+    const agentId = 'test-agent-id';
+
+    it('POSTs to /agents/{id}/events with snake_case body', async () => {
+      const mocks = testEnv.getMocks();
+      mocks.fetch.mockResponse(`/agents/${agentId}/events`, {
+        status: 204,
+        body: '',
+      });
+
+      await agentClient.pushEvent(agentId, {
+        eventType: 'RunCompleted',
+        payload: { result: 42 },
+        agentpinJwt: 'jwt',
+      });
+
+      const calls = mocks.fetch.getCallsFor(`/agents/${agentId}/events`);
+      expect(calls[0].method).toBe('POST');
+      expect(JSON.parse(calls[0].body!)).toEqual({
+        event_type: 'RunCompleted',
+        payload: { result: 42 },
+        agentpin_jwt: 'jwt',
+      });
+    });
+
+    it('throws for empty agent ID', async () => {
+      await expect(
+        agentClient.pushEvent('', { eventType: 'RunStarted', payload: {} })
+      ).rejects.toThrow('Agent ID is required');
+    });
+  });
 });

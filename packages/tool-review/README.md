@@ -1,5 +1,7 @@
 # symbi-tool-review
 
+> ⚠️ **Deprecated for OSS use.** `@symbiont/tool-review` targets the hosted Symbiont Tool Review API (a separate service), which is not exposed by the open-source Symbiont runtime. It remains functional against that hosted service but is not covered by OSS-runtime parity.
+
 [![npm](https://img.shields.io/npm/v/symbi-tool-review.svg)](https://www.npmjs.com/package/symbi-tool-review)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE)
 

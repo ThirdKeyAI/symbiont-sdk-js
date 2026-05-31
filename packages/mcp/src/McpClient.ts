@@ -1,14 +1,11 @@
 import {
   WorkflowExecutionPayload,
   WorkflowExecutionResult,
-  WorkflowListResponse,
-  McpConnectionStatus,
-} from '../../types/src/mcp';
-import {
   HealthStatus,
   RequestOptions,
   SymbiontConfig,
 } from 'symbi-types';
+import { buildRuntimeUrl } from './urlUtils';
 
 /**
  * Simple interface to avoid circular dependency with SymbiontClient
@@ -19,7 +16,12 @@ interface ClientDependency {
 }
 
 /**
- * Client for managing workflows and MCP operations via the Symbiont Runtime API
+ * Client for executing workflows against the Symbiont Runtime API.
+ *
+ * The open-source Symbiont runtime (v1.14.3) exposes `POST /workflows/execute`
+ * and the health endpoints under a single `/api/v1` version segment. It does NOT
+ * expose `/workflows` (list), `/workflows/executions/*`, or `/mcp/*` routes, so
+ * those phantom methods have been removed.
  */
 export class McpClient {
   private client: ClientDependency;
@@ -30,7 +32,7 @@ export class McpClient {
 
   /**
    * Execute a workflow with parameters
-   * POST /workflows/execute
+   * POST /api/v1/workflows/execute
    */
   async executeWorkflow<T = unknown>(
     payload: WorkflowExecutionPayload
@@ -53,63 +55,10 @@ export class McpClient {
 
   /**
    * Check server health status
-   * GET /health
+   * GET /api/v1/health
    */
   async checkServerHealth(): Promise<HealthStatus> {
     return this.makeRequest<HealthStatus>('/health', {
-      method: 'GET',
-    });
-  }
-
-  /**
-   * List available workflows
-   * GET /workflows
-   */
-  async listWorkflows(): Promise<WorkflowListResponse> {
-    return this.makeRequest<WorkflowListResponse>('/workflows', {
-      method: 'GET',
-    });
-  }
-
-  /**
-   * Get workflow execution status
-   * GET /workflows/executions/{executionId}
-   */
-  async getExecutionStatus<T = unknown>(
-    executionId: string
-  ): Promise<WorkflowExecutionResult<T>> {
-    if (!executionId) {
-      throw new Error('Execution ID is required');
-    }
-
-    return this.makeRequest<WorkflowExecutionResult<T>>(
-      `/workflows/executions/${executionId}`,
-      {
-        method: 'GET',
-      }
-    );
-  }
-
-  /**
-   * Cancel a workflow execution
-   * DELETE /workflows/executions/{executionId}
-   */
-  async cancelExecution(executionId: string): Promise<void> {
-    if (!executionId) {
-      throw new Error('Execution ID is required');
-    }
-
-    await this.makeRequest<void>(`/workflows/executions/${executionId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  /**
-   * Get MCP connection status
-   * GET /mcp/status
-   */
-  async getConnectionStatus(): Promise<McpConnectionStatus> {
-    return this.makeRequest<McpConnectionStatus>('/mcp/status', {
       method: 'GET',
     });
   }
@@ -124,11 +73,10 @@ export class McpClient {
     try {
       // Get authentication headers from the parent client
       const authHeaders = await this.client.getAuthHeaders(endpoint);
-      
-      // Build the full URL
+
+      // Build the full URL, guaranteeing exactly one /api/v1 segment.
       const config = this.client.configuration;
-      const baseUrl = config.runtimeApiUrl;
-      const fullUrl = `${baseUrl}${endpoint}`;
+      const fullUrl = buildRuntimeUrl(config.runtimeApiUrl, endpoint);
 
       // Prepare headers
       const headers: Record<string, string> = {

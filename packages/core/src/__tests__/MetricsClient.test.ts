@@ -137,13 +137,15 @@ describe('MetricsCollector', () => {
 });
 
 describe('MetricsApiClient', () => {
-  it('should call the correct endpoint', async () => {
+  it('GET /metrics resolves to a single /api/v1 prefix', async () => {
+    const metricsData = { timestamp: '2026-02-15T12:00:00Z' };
+    const calls: string[] = [];
     const mockResponse = {
       ok: true,
       status: 200,
       statusText: 'OK',
-      json: async () => ({ timestamp: '2026-02-15T12:00:00Z' }),
-      text: async () => '',
+      json: async () => metricsData,
+      text: async () => JSON.stringify(metricsData),
     };
 
     const mockClient = {
@@ -151,15 +153,18 @@ describe('MetricsApiClient', () => {
       configuration: { runtimeApiUrl: 'http://localhost:8080' } as any,
     };
 
-    // We test through the class
     const client = new MetricsApiClient(mockClient);
 
-    // Mock fetch globally
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = (async () => mockResponse) as any;
+    globalThis.fetch = (async (url: string) => {
+      calls.push(url);
+      return mockResponse;
+    }) as any;
     try {
-      const result = await client.getMetricsSnapshot();
-      expect(result).toEqual({ timestamp: '2026-02-15T12:00:00Z' });
+      const result = await client.getMetrics();
+      expect(result).toEqual(metricsData);
+      expect(calls[0]).toBe('http://localhost:8080/api/v1/metrics');
+      expect(calls[0].match(/\/api\/v1/g)).toHaveLength(1);
     } finally {
       globalThis.fetch = originalFetch;
     }

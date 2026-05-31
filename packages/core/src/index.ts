@@ -20,9 +20,6 @@ export {
   MemoryManagerConfig
 } from './memory';
 
-// Export vector system implementations
-export * from './vector';
-
 // Export HTTP endpoint management
 export { HttpEndpointManager } from './http';
 export { EndpointMetrics as EndpointMetricsClass } from './http';
@@ -46,22 +43,6 @@ export type { SignatureVerifier, WebhookProviderName } from './WebhookVerifier';
 
 // Export skill scanning and loading
 export { SkillScanner, SkillLoader } from './SkillScanner';
-
-// Export reasoning client
-export { ReasoningClient } from './ReasoningClient';
-
-// Export communication policy gate client
-export { CommunicationClient } from './CommunicationClient';
-export type { CommunicationRule, CommunicationEvaluation } from './CommunicationClient';
-
-// Export ToolClad client
-export { ToolCladClient } from './ToolCladClient';
-export type {
-  ToolManifestInfo,
-  ToolValidationResult,
-  ToolTestResult,
-  ToolExecutionResult,
-} from './ToolCladClient';
 
 // Export metrics
 export {

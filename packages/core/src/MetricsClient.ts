@@ -5,6 +5,7 @@ import {
   RequestOptions,
   SymbiontConfig,
 } from 'symbi-types';
+import { buildRuntimeUrl } from './urlUtils';
 
 // Re-export the type
 export type { MetricsSnapshotType };
@@ -207,7 +208,7 @@ interface ClientDependency {
  *
  * Accessed via `client.metricsClient`:
  * ```ts
- * const snapshot = await client.metricsClient.getMetricsSnapshot();
+ * const metrics = await client.metricsClient.getMetrics();
  * ```
  */
 export class MetricsApiClient {
@@ -217,31 +218,10 @@ export class MetricsApiClient {
     this.client = client;
   }
 
-  /** Get the current metrics snapshot. GET /metrics/snapshot */
-  async getMetricsSnapshot(): Promise<Record<string, unknown>> {
-    return this.makeRequest<Record<string, unknown>>('/metrics/snapshot', {
+  /** Get the current runtime metrics. GET /metrics */
+  async getMetrics(): Promise<Record<string, unknown>> {
+    return this.makeRequest<Record<string, unknown>>('/metrics', {
       method: 'GET',
-    });
-  }
-
-  /** Get scheduler-specific metrics. GET /metrics/scheduler */
-  async getSchedulerMetrics(): Promise<Record<string, unknown>> {
-    return this.makeRequest<Record<string, unknown>>('/metrics/scheduler', {
-      method: 'GET',
-    });
-  }
-
-  /** Get system resource metrics. GET /metrics/system */
-  async getSystemMetrics(): Promise<Record<string, unknown>> {
-    return this.makeRequest<Record<string, unknown>>('/metrics/system', {
-      method: 'GET',
-    });
-  }
-
-  /** Trigger a metrics export. POST /metrics/export */
-  async exportMetrics(): Promise<Record<string, unknown>> {
-    return this.makeRequest<Record<string, unknown>>('/metrics/export', {
-      method: 'POST',
     });
   }
 
@@ -253,7 +233,7 @@ export class MetricsApiClient {
       const authHeaders = await this.client.getAuthHeaders(endpoint);
       const config = this.client.configuration;
       const baseUrl = config.runtimeApiUrl;
-      const fullUrl = `${baseUrl}${endpoint}`;
+      const fullUrl = buildRuntimeUrl(baseUrl, endpoint);
 
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',

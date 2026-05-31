@@ -144,3 +144,6 @@ apps/docs/api/
 
 # TypeDoc output
 docs/
+
+coverage/
+tsconfig.tsbuildinfo
