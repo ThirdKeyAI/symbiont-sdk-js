@@ -25,6 +25,7 @@ interface ClientDependency {
 /**
  * Client for managing tool review workflows via the Tool Review API
  */
+/** @deprecated Targets the hosted Tool Review API, not the OSS Symbiont runtime. */
 export class ToolReviewClient {
   private client: ClientDependency;
 
