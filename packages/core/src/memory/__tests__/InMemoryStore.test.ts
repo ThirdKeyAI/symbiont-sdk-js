@@ -358,31 +358,35 @@ describe('InMemoryStore', () => {
     });
 
     it('should update timestamp on update', async () => {
-      // update() stamps the record with `new Date()` (real now). Seed a memory
-      // whose timestamp is deliberately one minute in the past so the
-      // post-update value is unambiguously greater, regardless of millisecond
-      // timing. The previous `setTimeout(1)` version flaked in CI because
-      // store() and update() could land in the same millisecond
-      // (`expected N to be greater than N`). get() preserves `timestamp`
-      // (recordAccess only bumps accessCount), so the seeded past value
-      // survives the read.
-      const pastTimestamp = new Date(Date.now() - 60_000);
-      await store.store({
-        id: 'update-timestamp-test',
-        content: { text: 'Past content' },
-        level: MemoryLevel.SHORT_TERM,
-        timestamp: pastTimestamp,
-        accessCount: 0,
-        importance: 0.5,
-      });
-      const originalTimestamp = (await store.get('update-timestamp-test'))?.timestamp;
+      // Both update() and get() (via recordAccess) stamp the record with
+      // `new Date()`, so this assertion is purely a function of wall-clock
+      // time. The original `setTimeout(1)` version flaked in CI when the two
+      // reads landed in the same millisecond (`expected N to be greater than
+      // N`). Drive a fake clock so the post-update read is deterministically
+      // later than the original — no reliance on real timing.
+      vi.useFakeTimers();
+      try {
+        vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+        await store.store({
+          id: 'update-timestamp-test',
+          content: { text: 'Original content' },
+          level: MemoryLevel.SHORT_TERM,
+          timestamp: new Date(),
+          accessCount: 0,
+          importance: 0.5,
+        });
+        const originalTimestamp = (await store.get('update-timestamp-test'))?.timestamp;
 
-      await store.update('update-timestamp-test', { importance: 0.8 });
+        vi.setSystemTime(new Date('2026-01-01T00:00:01.000Z'));
+        await store.update('update-timestamp-test', { importance: 0.8 });
 
-      const updatedMemory = await store.get('update-timestamp-test');
-      expect(updatedMemory?.timestamp.getTime()).toBeGreaterThan(
-        originalTimestamp?.getTime() || 0
-      );
+        const updatedMemory = await store.get('update-timestamp-test');
+        expect(updatedMemory?.timestamp.getTime()).toBeGreaterThan(
+          originalTimestamp?.getTime() || 0
+        );
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should not allow ID changes', async () => {
