@@ -358,14 +358,28 @@ describe('InMemoryStore', () => {
     });
 
     it('should update timestamp on update', async () => {
-      const originalTimestamp = (await store.get(memoryId))?.timestamp;
-      
-      // Wait a bit to ensure timestamp difference
-      await new Promise(resolve => setTimeout(resolve, 1));
-      
-      await store.update(memoryId, { importance: 0.8 });
-      
-      const updatedMemory = await store.get(memoryId);
+      // update() stamps the record with `new Date()` (real now). Seed a memory
+      // whose timestamp is deliberately one minute in the past so the
+      // post-update value is unambiguously greater, regardless of millisecond
+      // timing. The previous `setTimeout(1)` version flaked in CI because
+      // store() and update() could land in the same millisecond
+      // (`expected N to be greater than N`). get() preserves `timestamp`
+      // (recordAccess only bumps accessCount), so the seeded past value
+      // survives the read.
+      const pastTimestamp = new Date(Date.now() - 60_000);
+      await store.store({
+        id: 'update-timestamp-test',
+        content: { text: 'Past content' },
+        level: MemoryLevel.SHORT_TERM,
+        timestamp: pastTimestamp,
+        accessCount: 0,
+        importance: 0.5,
+      });
+      const originalTimestamp = (await store.get('update-timestamp-test'))?.timestamp;
+
+      await store.update('update-timestamp-test', { importance: 0.8 });
+
+      const updatedMemory = await store.get('update-timestamp-test');
       expect(updatedMemory?.timestamp.getTime()).toBeGreaterThan(
         originalTimestamp?.getTime() || 0
       );
