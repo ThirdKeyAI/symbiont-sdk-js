@@ -78,6 +78,19 @@ console.log(result.result);
 
 ---
 
+## Compatibility
+
+The SDK talks to the runtime over its versioned REST API (`/api/v1`).
+
+| SDK (`symbi-core`) | Symbiont runtime |
+|--------------------|------------------|
+| 1.14.x             | 1.14.x (tested); compatible with 1.15.x / 1.16.x for the documented surface |
+
+Pin the SDK's minor version to your runtime's minor version when you can; newer
+1.x runtimes remain compatible for the endpoints documented here.
+
+---
+
 ## Capabilities
 
 The SDK exposes one client (`SymbiontClient`) with namespaced sub-clients for each runtime feature.
