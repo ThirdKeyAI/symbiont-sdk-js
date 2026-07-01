@@ -1,0 +1,13 @@
+{
+  "name": "symbi-examples",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Runnable examples for the Symbiont JS SDK",
+  "type": "module",
+  "scripts": {
+    "hello": "node hello-runtime.mjs"
+  },
+  "dependencies": {
+    "symbi-core": "*"
+  }
+}
