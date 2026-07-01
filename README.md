@@ -10,7 +10,7 @@
 **Official JavaScript/TypeScript SDK for Symbiont, the policy-governed agent runtime.**
 *Same agent. Secure runtime.*
 
-This SDK is the integration surface for the [Symbiont runtime](https://github.com/thirdkeyai/symbiont). Use it from Node.js, edge runtimes, or the browser to manage agents, drive scheduled and channel-bound execution, run the ORGA reasoning loop, register ToolClad-governed tools, evaluate the Communication Policy Gate, verify webhooks, and integrate AgentPin identity — all against a runtime that enforces Cedar policy, SchemaPin tool verification, and tamper-evident audit logging.
+This SDK is the integration surface for the [Symbiont runtime](https://github.com/thirdkeyai/symbiont). Use it from Node.js, edge runtimes, or the browser to manage agents and workflows, drive scheduled and channel-bound execution, manage policies, secrets, and MCP connections, verify webhooks, and integrate AgentPin identity — all against a runtime that enforces Cedar policy, SchemaPin tool verification, ToolClad tool contracts, and tamper-evident audit logging.
 
 The runtime decides what an agent may do. The SDK decides how your application talks to the runtime.
 
@@ -88,9 +88,6 @@ The SDK exposes one client (`SymbiontClient`) with namespaced sub-clients for ea
 | `client.schedules` | Cron schedules with pause/resume/trigger and run history |
 | `client.channels` | Slack/Teams/Mattermost adapters, mappings, audit |
 | `client.workflows` | Multi-agent workflow execution |
-| `client.reasoning` | ORGA loop control, journal, Cedar policies, circuit breakers, knowledge bridge, tool profiles, loop diagnostics |
-| `client.toolclad` | ToolClad manifests — list, validate, test, execute, schema, hot reload |
-| `client.communication` | Communication Policy Gate rules and evaluation |
 | `client.agentpin` | Client-side AgentPin keygen, credential issuance and verification, discovery, key pinning |
 | `client.policies` / `client.policyBuilder` | Policy creation and management |
 | `client.secrets` | Vault, encrypted-file, and OS-keychain secrets |
@@ -106,13 +103,14 @@ Standalone modules (no client required): `WebhookVerifier` (HMAC, JWT, provider 
 
 ## Trust Stack integration
 
-The SDK exposes the runtime features that enforce the Symbiont Trust Stack:
+The SDK gives you typed access to the Trust Stack primitives it exposes, against
+a runtime that enforces the rest:
 
-- **Cedar policies** via `client.reasoning.addCedarPolicy()` and the `policyBuilder` namespace — fine-grained authorization for every agent action
+- **Cedar policies** via `client.policies` and the `client.policyBuilder` namespace — create and manage fine-grained authorization for agent actions
 - **AgentPin** via `client.agentpin.*` — domain-anchored ES256 credential issuance and verification, runs entirely client-side (no runtime required)
-- **ToolClad** via `client.toolclad.*` — declarative tool manifests with argument validation, scope enforcement, and Cedar policy generation; supports `oneshot`, `session`, `browser`, `http`, and `mcp-proxy` backends as of Symbiont v1.10.0
-- **Communication Policy Gate** via `client.communication.*` — Cedar-evaluated allow/deny rules for inter-agent messages
-- **SchemaPin** — enforced server-side; tool signatures are verified before tool execution
+- **Secrets** via `client.secrets` — Vault, encrypted-file, and OS-keychain backends
+- **MCP connections** via `client.mcp` and tool review via `client.toolReview`
+- **ToolClad tool contracts and SchemaPin verification** — enforced by the runtime server-side; tool signatures are verified before tool execution
 
 Model output is never treated as execution authority. The runtime controls what actually happens.
 
@@ -139,64 +137,25 @@ The SDK is published as a set of focused packages. Most users only need `symbi-c
 
 ## Examples
 
-### Reasoning loop
-
-Run an autonomous Observe-Reason-Gate-Act cycle with policy gates, circuit breakers, and journal replay:
+### Agents and workflows
 
 ```typescript
-const response = await client.reasoning.runLoop('agent-1', {
-  config: { max_iterations: 10, timeout_ms: 60000 },
-  initial_message: 'Analyze the latest sales data and create a report.',
+await client.connect();
+
+// Create and execute an agent
+const agent = await client.agents.createAgent({
+  name: 'textProcessor',
+  description: 'Processes and analyzes text input',
+  parameters: [{ name: 'text', type: { name: 'string' }, required: true }],
+  returnType: { name: 'string' },
+  capabilities: ['text_processing'],
 });
 
-console.log('Output:', response.result.output);
-console.log('Iterations:', response.result.iterations);
-console.log('Termination:', response.result.termination_reason.type);
+const result = await client.agents.executeAgent(agent.id, { text: 'Hello, Symbiont!' });
+console.log(result.result);
 
-// Read journal entries for replay/audit
-const journal = await client.reasoning.getJournalEntries('agent-1', { limit: 50 });
-
-// Add an action-level Cedar policy
-await client.reasoning.addCedarPolicy('agent-1', {
-  name: 'deny-file-write',
-  source: 'forbid(principal, action == "tool_call", resource) when { resource.name == "write_file" };',
-  active: true,
-});
-
-// Inspect circuit breaker state and adaptive parameters
-const breakers = await client.reasoning.getCircuitBreakerStatus('agent-1');
-const profiles = await client.reasoning.getToolProfiles('agent-1');
-```
-
-### ToolClad — governed tool execution
-
-Tools are declared in `.clad.toml` manifests with argument validation, scope enforcement, and Cedar policy generation. Drive them from the SDK:
-
-```typescript
-const tools = await client.toolclad.listTools();
-const schema = await client.toolclad.getSchema('nmap');
-
-const result = await client.toolclad.executeTool('nmap', { target: '10.0.0.1' });
-console.log(result.status, result.scanId, result.exitCode);
-
-// Hot reload after editing a manifest on disk
-await client.toolclad.reloadTools();
-```
-
-### Communication Policy Gate
-
-```typescript
-await client.communication.addRule({
-  fromAgent: 'analyst',
-  toAgent: 'reporter',
-  action: 'send_message',
-  effect: 'allow',
-  priority: 10,
-  maxDepth: 3,
-});
-
-const decision = await client.communication.evaluate('analyst', 'reporter', 'send_message');
-console.log(decision.allowed, decision.rule, decision.reason);
+// List the fleet
+const agents = await client.agents.listAgents();
 ```
 
 ### AgentPin — client-side identity
