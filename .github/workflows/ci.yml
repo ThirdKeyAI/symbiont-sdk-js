@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Build all workspace packages
-        run: npm run build --workspaces
+        run: npm run build --workspaces --if-present
 
       - name: Type-check workspace
         run: npm run type-check
@@ -63,7 +63,7 @@ jobs:
         run: npm ci
 
       - name: Build all workspace packages
-        run: npm run build --workspaces
+        run: npm run build --workspaces --if-present
 
       - name: Pack each workspace package
         run: |

@@ -192,11 +192,21 @@ export class AgentClient {
   /**
    * Execute an agent with parameters
    * POST /agents/{id}/execute
+   *
+   * Runtime v1.21.0 treats `Idempotency-Key` as the durable invocation
+   * identity. Pass `idempotencyKey` and reuse the same UUID with the same
+   * request to retrieve a saved completion or an explicit
+   * `in_progress` / `unresolved` / `reconciled` / `conflict` state instead of
+   * running the agent twice. A key is generated when omitted, which makes the
+   * call non-retryable — supply your own to retry safely.
+   *
+   * A reconciled invocation answers HTTP 409 with the operator's separately
+   * signed `resolution` and never a manufactured completion.
    */
   async executeAgent<T = unknown>(
     agentId: string,
     params: Record<string, unknown>,
-    options?: ExecutionOptions
+    options?: ExecutionOptions & { idempotencyKey?: string }
   ): Promise<ExecutionResult<T>> {
     if (!agentId) {
       throw new Error('Agent ID is required');
@@ -205,14 +215,18 @@ export class AgentClient {
       throw new Error('Execution parameters are required');
     }
 
+    const { idempotencyKey, ...executionOptions } = options || {};
     const requestBody = {
       parameters: params,
-      ...(options || {}),
+      ...executionOptions,
     };
 
     return this.makeRequest<ExecutionResult<T>>(`/agents/${agentId}/execute`, {
       method: 'POST',
       body: requestBody,
+      headers: {
+        'Idempotency-Key': idempotencyKey ?? globalThis.crypto.randomUUID(),
+      },
     });
   }
 

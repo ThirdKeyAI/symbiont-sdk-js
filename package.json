@@ -1,6 +1,6 @@
 {
   "name": "symbiont-sdk-js",
-  "version": "1.14.3",
+  "version": "1.15.0",
   "description": "Symbiont JavaScript SDK - Monorepo",
   "workspaces": [
     "packages/*",

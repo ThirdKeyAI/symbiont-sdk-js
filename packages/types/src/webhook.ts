@@ -59,9 +59,11 @@ export const WebhookProviderPresetSchema = z.object({
 /**
  * Status returned by the HTTP Input handler.
  *
- * - `execution_started`: the target agent was in the `Running` state and the
- *   message was dispatched via the runtime communication bus. Execution
- *   continues asynchronously.
+ * - `execution_started`: runtimes older than v1.21.0 only. The target agent
+ *   was in the `Running` state and the message was dispatched via the runtime
+ *   communication bus, continuing asynchronously. Runtime v1.21.0 retired this
+ *   handoff on the HTTP Input route: every reasoning request returns its own
+ *   result, including while another invocation of the same agent is active.
  * - `completed`: the agent was not running (or the bus dispatch failed) and
  *   the request was served by the on-demand LLM invocation path, which ran
  *   an ORGA tool-calling loop and produced a final response inline.
@@ -93,8 +95,27 @@ export const WebhookToolRunSchema = z.object({
 });
 
 /**
+ * Public reference to the protected run journal for an invocation.
+ * Present from runtime v1.21.0.
+ */
+export interface WebhookRunAudit {
+  run_id: string;
+  path: string;
+  public_key: string;
+}
+
+export const WebhookRunAuditSchema = z.object({
+  run_id: z.string(),
+  path: z.string(),
+  public_key: z.string(),
+});
+
+/**
  * Response returned when the target agent was running and the request was
  * dispatched on the communication bus.
+ *
+ * Runtimes older than v1.21.0 only — v1.21.0 retired this shape on the HTTP
+ * Input route. Retained so this SDK still parses supported earlier runtimes.
  */
 export interface WebhookExecutionStartedResponse {
   status: 'execution_started';
@@ -122,6 +143,20 @@ export interface WebhookCompletedResponse {
   agent_id: string;
   response: string;
   tool_runs: WebhookToolRun[];
+  /** Why the loop stopped, e.g. `Completed`. Runtime v1.21.0+. */
+  termination_reason?: string;
+  /** ORGA loop iterations. Runtime v1.21.0+. */
+  iterations?: number;
+  /** Public audit reference for the protected run journal. Runtime v1.21.0+. */
+  audit?: WebhookRunAudit;
+  /** Durable invocation identity used for retries. Runtime v1.21.0+. */
+  invocation_id?: string;
+  /** True when a saved result was returned for a retry. Runtime v1.21.0+. */
+  replayed?: boolean;
+  /** Token usage totals for the invocation. Runtime v1.21.0+. */
+  total_usage?: Record<string, unknown>;
+  /** Shared budget snapshot at completion. Runtime v1.21.0+. */
+  budget?: Record<string, unknown>;
   model: string;
   provider: string;
   latency_ms: number;
@@ -133,6 +168,13 @@ export const WebhookCompletedResponseSchema = z.object({
   agent_id: z.string(),
   response: z.string(),
   tool_runs: z.array(WebhookToolRunSchema),
+  termination_reason: z.string().optional(),
+  iterations: z.number().optional(),
+  audit: WebhookRunAuditSchema.optional(),
+  invocation_id: z.string().optional(),
+  replayed: z.boolean().optional(),
+  total_usage: z.record(z.unknown()).optional(),
+  budget: z.record(z.unknown()).optional(),
   model: z.string(),
   provider: z.string(),
   latency_ms: z.number(),

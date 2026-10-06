@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.0] - 2026-10-06
+
+Tracks the REST surface changes in Symbiont runtime v1.21.0, and is the first
+release published through an automated workflow.
+
+All nine packages now share one version. They had drifted apart (some at
+1.13.0, some at 1.14.3) and npm still carried 1.11.0, because the repository
+had no release workflow and every version after 1.11.0 was built but never
+published. `.github/workflows/release.yml` closes that gap: a `v*.*.*` tag now
+verifies, publishes each package to npm and opens a GitHub Release.
+
+### Added
+
+- **Release workflow.** Tagging `vX.Y.Z` runs the test matrix, checks the tag
+  against the root package version, publishes every workspace package to npm
+  (skipping any version already there, so a re-run is safe) and creates a
+  GitHub Release from this changelog.
+- **`WebhookRunAudit`** and new optional fields on `WebhookCompletedResponse`
+  (`termination_reason`, `iterations`, `audit`, `invocation_id`, `replayed`,
+  `total_usage`, `budget`), matching the runtime v1.21.0 HTTP Input response.
+  The Zod schema accepts them as optional, so responses from earlier runtimes
+  still validate.
+- **`executeAgent(..., { idempotencyKey })`** sends the `Idempotency-Key`
+  header that runtime v1.21.0 treats as the durable invocation identity.
+  Reusing a UUID with the same request returns a saved completion or an
+  explicit `in_progress` / `unresolved` / `reconciled` / `conflict` state
+  instead of running the agent twice. A key is generated when omitted, which
+  makes that call non-retryable; pass your own to retry safely. A reconciled
+  invocation answers HTTP 409 with the operator's signed `resolution`.
+
+### Changed
+
+- `WebhookInvocationStatus.EXECUTION_STARTED` and
+  `WebhookExecutionStartedResponse` are documented as pre-v1.21.0 only. The
+  runtime retired that handoff on the HTTP Input route, but both are retained
+  so this SDK still parses responses from earlier runtimes.
+- All packages unified at 1.15.0; `SKILL.md` synced.
+
+### Known issues
+
+- `symbi-core` and `symbi-agent` depend on each other, so the packages have no
+  total publish order. This does not block an npm release, but it should be
+  broken before the dependency ranges are tightened from `^1.0.0`.
+
 ## [1.13.0] - 2026-05-07
 
 Tracks Symbiont runtime v1.13.0.
